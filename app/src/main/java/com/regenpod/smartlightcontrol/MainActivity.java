@@ -19,6 +19,6 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void searchAndConnect(View view) {
-
+//
     }
 }
