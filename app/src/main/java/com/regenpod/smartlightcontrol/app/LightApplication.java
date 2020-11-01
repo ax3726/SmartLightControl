@@ -1,4 +1,4 @@
-package com.regenpod.smartlightcontrol;
+package com.regenpod.smartlightcontrol.app;
 
 import android.app.Application;
 

@@ -1,20 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@drawable/main_bg_icon">
 
-    <Button
-        android:id="@+id/btn_connect"
+    <TextView
+        android:id="@+id/tv_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="searchAndConnect"
-        android:text="蓝牙连接"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="60dp"
+        android:drawableLeft="@drawable/back_icon"
+        android:gravity="center_vertical"
+        android:text="Back"
+        android:onClick="onFinish"
+        android:textColor="@color/colorPrimary"
+        android:textSize="10sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="63dp"
+        android:layout_marginRight="63dp"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/button_bg_icon"
+            android:text="ON"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/button_bg_icon"
+            android:onClick="onTiming"
+            android:text="Timing"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/button_bg_icon"
+            android:text="Dimming"
+            android:onClick="onDimming"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/button_bg_icon"
+            android:text="Pulse"
+            android:textAllCaps="false"
+            android:onClick="onPulse"
+            android:textColor="@color/colorWhite"
+            android:textSize="10dp" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/button_bg_icon"
+            android:text="Part lights"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+
+</FrameLayout>

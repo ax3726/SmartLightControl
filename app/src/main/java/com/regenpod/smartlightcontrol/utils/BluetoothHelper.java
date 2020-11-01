@@ -1,4 +1,4 @@
-package com.regenpod.smartlightcontrol;
+package com.regenpod.smartlightcontrol.utils;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
