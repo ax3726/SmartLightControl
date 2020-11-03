@@ -88,7 +88,8 @@ public class ConnectActivity extends BaseActivity {
 
     @Override
     protected void releaseData() {
-
+        BleManager.getInstance().disconnectAllDevice();
+        BleManager.getInstance().destroy();
     }
 
     private void showConnectedDevice() {
