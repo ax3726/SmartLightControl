@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.regenpod.smartlightcontrol.ui.ui.home.HomeFragment"
+        android:name="com.regenpod.smartlightcontrol.ui.pulse.PulseFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_pulse" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.regenpod.smartlightcontrol.ui.ui.dashboard.DashboardFragment"
+        android:name="com.regenpod.smartlightcontrol.ui.timer.TimerFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_timer" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.regenpod.smartlightcontrol.ui.ui.notifications.NotificationsFragment"
+        android:name="com.regenpod.smartlightcontrol.ui.dimming.DimmingFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_dimming" />
 </navigation>

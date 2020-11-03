@@ -1,14 +1,14 @@
-package com.regenpod.smartlightcontrol.ui.ui.notifications;
+package com.regenpod.smartlightcontrol.ui.dimming;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class NotificationsViewModel extends ViewModel {
+public class DimmingViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public NotificationsViewModel() {
+    public DimmingViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is notifications fragment");
     }

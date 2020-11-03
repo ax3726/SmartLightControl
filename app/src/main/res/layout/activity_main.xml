@@ -1,82 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_bg_icon">
+    android:background="@drawable/main_bg_icon"
+    android:paddingTop="40dp"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="60dp"
-        android:drawableLeft="@drawable/back_icon"
-        android:gravity="center_vertical"
-        android:text="Back"
-        android:onClick="onFinish"
-        android:textColor="@color/colorPrimary"
-        android:textSize="10sp" />
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="63dp"
-        android:layout_marginRight="63dp"
-        android:orientation="vertical">
+        android:paddingLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/button_bg_icon"
-            android:text="ON"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="10dp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:src="@drawable/logo_icon"
+            android:layout_height="wrap_content"
+            />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/button_bg_icon"
-            android:onClick="onTiming"
-            android:text="Timing"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="10dp" />
+    </RelativeLayout>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/button_bg_icon"
-            android:text="Dimming"
-            android:onClick="onDimming"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="10dp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/button_bg_icon"
+    <FrameLayout
+        android:id="@+id/fly_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RadioGroup
+        android:id="@+id/rg_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginBottom="9dp"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <RadioButton
+            android:id="@+id/rb_pulse"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_main_menu_bg"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
             android:text="Pulse"
-            android:textAllCaps="false"
-            android:onClick="onPulse"
-            android:textColor="@color/colorWhite"
-            android:textSize="10dp" />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/button_bg_icon"
-            android:text="Part lights"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="10dp" />
-    </LinearLayout>
+            android:textColor="@color/colorWhite" />
 
+        <RadioButton
+            android:id="@+id/rb_timer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_main_menu_bg"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Timer"
+            android:textColor="@color/colorWhite" />
 
-</FrameLayout>
+        <RadioButton
+            android:id="@+id/rb_dimming"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_main_menu_bg"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Dimming"
+            android:textColor="@color/colorWhite" />
+    </RadioGroup>
+
+</LinearLayout>

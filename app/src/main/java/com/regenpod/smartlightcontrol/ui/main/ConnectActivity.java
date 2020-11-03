@@ -1,4 +1,4 @@
-package com.regenpod.smartlightcontrol.ui;
+package com.regenpod.smartlightcontrol.ui.main;
 
 
 import android.content.Intent;
