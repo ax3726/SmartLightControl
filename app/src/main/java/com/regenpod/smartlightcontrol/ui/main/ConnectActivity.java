@@ -51,14 +51,6 @@ public class ConnectActivity extends BaseActivity {
         return R.layout.activity_connect;
     }
 
-    /**
-     * 搜索并连接蓝牙
-     *
-     * @param view
-     */
-    public void searchAndConnect(View view) {
-        startActivity(new Intent(this, MainActivity.class));
-    }
 
     @Override
     protected void initView(Bundle savedInstanceState) {
@@ -67,6 +59,12 @@ public class ConnectActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        initAdapter();
+        showConnectedDevice();
+        checkPermissions();
+    }
+
+    private void initAdapter() {
         mAdapter = new BaseRecycleViewAdapter<BleDevice>(R.layout.item_device_layout, false, true) {
             @Override
             protected void convert(@NotNull BaseCommonViewHolder baseCommonViewHolder, final BleDevice item) {
@@ -77,6 +75,7 @@ public class ConnectActivity extends BaseActivity {
                                 if (!BleManager.getInstance().isConnected(item)) {
                                     BleManager.getInstance().cancelScan();
                                     connect(item);
+                                    Toast.makeText(aty, "正在连接蓝牙", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -85,12 +84,23 @@ public class ConnectActivity extends BaseActivity {
         rcDevice.setLayoutManager(new LinearLayoutManager(aty));
         rcDevice.setAdapter(mAdapter);
         mAdapter.setData(mDataList);
-        checkPermissions();
     }
 
     @Override
     protected void releaseData() {
 
+    }
+
+    private void showConnectedDevice() {
+        List<BleDevice> deviceList = BleManager.getInstance().getAllConnectedDevice();
+        if (deviceList != null) {
+            for (BleDevice device : deviceList) {
+                if (!TextUtils.isEmpty(device.getName())) {
+                    mDataList.add(device);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void checkPermissions() {
@@ -211,6 +221,7 @@ public class ConnectActivity extends BaseActivity {
             }
         });
     }
+
     private void connect(final BleDevice bleDevice) {
         BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
             @Override
@@ -226,11 +237,11 @@ public class ConnectActivity extends BaseActivity {
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 Toast.makeText(aty, "连接成功", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(aty, MainActivity.class));
             }
 
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
-
 
                 if (isActiveDisConnected) {
                     Toast.makeText(aty, getString(R.string.active_disconnected), Toast.LENGTH_LONG).show();
@@ -242,6 +253,8 @@ public class ConnectActivity extends BaseActivity {
             }
         });
     }
+
+
     private boolean checkGPSIsOpen() {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null)
