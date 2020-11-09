@@ -5,14 +5,12 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Checkable;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.lm.common.R;
 
 
 /**
@@ -132,6 +130,10 @@ public class BaseCommonViewHolder extends BaseViewHolder {
     }
 
 
+
+    public TextView getTextView(int id) {
+        return ((TextView) getView(id));
+    }
 
     public boolean getVisibility(int id) {
         return (getView(id)).getVisibility() == View.VISIBLE;
