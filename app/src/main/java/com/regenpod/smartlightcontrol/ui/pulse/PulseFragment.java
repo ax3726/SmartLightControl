@@ -45,9 +45,9 @@ public class PulseFragment extends BaseFragment {
                 StringBuilder sb = new StringBuilder();
                 sb.append("ht660:" + ht660Progress);
                 sb.append("\nht850:" + ht850Progress);
-                sb.append("\ndc660:" + dc850Progress);
-                sb.append("\ndc850:" + dc660Progress);
-
+                sb.append("\ndc660:" + dc660Progress);
+                sb.append("\ndc850:" + dc850Progress);
+                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

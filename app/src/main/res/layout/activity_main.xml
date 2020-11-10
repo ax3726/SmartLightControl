@@ -69,7 +69,7 @@
             android:button="@null"
             android:checked="true"
             android:gravity="center"
-            android:textSize="10sp"
+            android:textSize="10dp"
             android:text="Pulse"
             android:textColor="@color/colorWhite" />
 
@@ -82,7 +82,7 @@
             android:layout_weight="1"
             android:background="@drawable/selector_main_menu_bg"
             android:button="@null"
-            android:textSize="10sp"
+            android:textSize="10dp"
             android:gravity="center"
             android:text="Timer"
             android:textColor="@color/colorWhite" />
@@ -95,7 +95,7 @@
             android:background="@drawable/selector_main_menu_bg"
             android:button="@null"
             android:gravity="center"
-            android:textSize="10sp"
+            android:textSize="10dp"
             android:text="Dimming"
             android:textColor="@color/colorWhite" />
     </RadioGroup>

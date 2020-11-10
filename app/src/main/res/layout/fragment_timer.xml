@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/lly_timer"
-        android:layout_marginTop="100dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="100dp"
         android:layout_marginRight="20dp"
         android:background="@color/color_second_bg"
         android:orientation="vertical"
         android:paddingLeft="23dp"
         android:paddingTop="16dp"
         android:paddingRight="23dp"
-        android:paddingBottom="16dp"
->
+        android:paddingBottom="16dp">
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Timing"
-            android:textStyle="bold"
             android:textColor="@color/colorWhite"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="135dp"
@@ -42,15 +41,16 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-               android:src="@drawable/timer_logo_icon"/>
+                android:src="@drawable/timer_logo_icon" />
 
             <TextView
+                android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0min"
-                tools:text="12min"
+                android:text="0mins"
                 android:textColor="@color/colorWhite"
-                android:textSize="22dp" />
+                android:textSize="22dp"
+                tools:text="12mins" />
 
 
             <LinearLayout
@@ -82,9 +82,8 @@
         android:id="@+id/img_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="65dp"
-        android:src="@drawable/ok_icon"
         android:layout_gravity="center_horizontal"
-       />
+        android:layout_marginTop="65dp"
+        android:src="@drawable/ok_icon" />
 
 </LinearLayout>
