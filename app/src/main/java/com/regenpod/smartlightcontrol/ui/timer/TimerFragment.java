@@ -3,8 +3,6 @@ package com.regenpod.smartlightcontrol.ui.timer;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.lm.common.adapter.BaseCommonViewHolder;
@@ -32,9 +30,10 @@ public class TimerFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 int timerProgress = timerOperateHelper.getProgress();
-                StringBuilder sb = new StringBuilder();
+               /* StringBuilder sb = new StringBuilder();
                 sb.append("timer:" + timerProgress);
-                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();*/
+                Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
             }
         });
     }

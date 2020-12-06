@@ -3,16 +3,17 @@ package com.regenpod.smartlightcontrol.ui.main;
 import android.os.Bundle;
 import android.widget.RadioGroup;
 
-import com.lm.common.base.BaseActivity;
-import com.regenpod.smartlightcontrol.R;
-import com.regenpod.smartlightcontrol.ui.dimming.DimmingFragment;
-import com.regenpod.smartlightcontrol.ui.pulse.PulseFragment;
-import com.regenpod.smartlightcontrol.ui.timer.TimerFragment;
-
 import androidx.annotation.IdRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.lm.common.base.BaseActivity;
+import com.regenpod.smartlightcontrol.BluetoothHelper;
+import com.regenpod.smartlightcontrol.R;
+import com.regenpod.smartlightcontrol.ui.dimming.DimmingFragment;
+import com.regenpod.smartlightcontrol.ui.pulse.PulseFragment;
+import com.regenpod.smartlightcontrol.ui.timer.TimerFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,5 +104,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BluetoothHelper.getInstance().disconnect();
+    }
 }

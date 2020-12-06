@@ -31,6 +31,7 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.adapter.BaseRecycleViewAdapter;
 import com.lm.common.base.BaseActivity;
+import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -62,8 +63,24 @@ public class ConnectActivity extends BaseActivity {
         initAdapter();
         showConnectedDevice();
         checkPermissions();
+
+       int a=50^00;
+        System.out.println("最后："+a);
     }
 
+
+    public static byte[] encrypt(byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        int len = bytes.length;
+        int key = 0x12;
+        for (int i = 0; i < len; i++) {
+            bytes[i] = (byte) (bytes[i] ^ key);
+            key = bytes[i];
+        }
+        return bytes;
+    }
     private void initAdapter() {
         mAdapter = new BaseRecycleViewAdapter<BleDevice>(R.layout.item_device_layout, false, true) {
             @Override
@@ -72,7 +89,7 @@ public class ConnectActivity extends BaseActivity {
                         .setOnClickListener(R.id.btn_connect, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (!BleManager.getInstance().isConnected(item)) {
+                               if (!BleManager.getInstance().isConnected(item)) {
                                     BleManager.getInstance().cancelScan();
                                     connect(item);
                                     Toast.makeText(aty, "正在连接蓝牙", Toast.LENGTH_SHORT).show();
@@ -237,6 +254,7 @@ public class ConnectActivity extends BaseActivity {
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
+               BluetoothHelper.getInstance().init(bleDevice);
                 Toast.makeText(aty, "连接成功", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(aty, MainActivity.class));
             }

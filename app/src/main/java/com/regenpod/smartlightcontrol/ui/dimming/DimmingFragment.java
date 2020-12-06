@@ -41,10 +41,11 @@ public class DimmingFragment extends BaseFragment {
             public void onClick(View v) {
                 int dm660Progress = dm660OperateHelper.getProgress();
                 int dm850Progress = dm850OperateHelper.getProgress();
-                StringBuilder sb = new StringBuilder();
+      /*          StringBuilder sb = new StringBuilder();
                 sb.append("dm660:" + dm660Progress);
                 sb.append("\ndm850:" + dm850Progress);
-                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();*/
+                Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
             }
         });
     }
