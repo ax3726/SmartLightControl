@@ -103,7 +103,7 @@ public abstract class BaseRecycleViewAdapter<T> extends BaseQuickAdapter<T, Base
                 tvEmptyHint.setText(emptyDataTip);
             }
             if (emptyIconResource != 0) {
-                ((ImageView) emptyView.findViewById(R.id.image_empty)).setImageResource(emptyIconResource);
+//                ((ImageView) emptyView.findViewById(R.id.image_empty)).setImageResource(emptyIconResource);
             }
             if (isAdaptiveHeight) {
                 emptyView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

@@ -14,8 +14,12 @@ import com.clj.fastble.callback.BleNotifyCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
+import com.clj.fastble.utils.HexUtil;
 
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BluetoothHelper {
 
@@ -26,6 +30,8 @@ public class BluetoothHelper {
     private BleDevice bleDevice;
     private BluetoothGattCharacteristic characteristicWrite = null;
     private BluetoothGattCharacteristic characteristicRead = null;
+    private SendThread sendThread = null;
+
     private static Handler handler = new Handler() {
         @Override
         public void dispatchMessage(@NonNull Message msg) {
@@ -38,13 +44,17 @@ public class BluetoothHelper {
                     Log.e("lm", "write fail" + msg.obj.toString());
                     break;
                 case READ_SUCESS:
-                    Log.e("lm", "收到消息 >>> " + new String((byte[]) msg.obj));
+                    String message = HexUtil.formatHexString((byte[]) msg.obj);
+                    Log.e("lm", "收到消息 >>> " + message);
+
+
                     break;
             }
 
 
         }
     };
+
 
     public static BluetoothHelper getInstance() {
         return Instance.instance;
@@ -61,6 +71,14 @@ public class BluetoothHelper {
             } catch (Exception ex) {
             }
         }
+
+        sendThread = new SendThread();
+        sendThread.start();
+        if (characteristicWrite == null) {
+            Log.e("lm", "没找到写入服务!");
+            return;
+        }
+
         if (characteristicRead == null) {
             Log.e("lm", "没找到监听服务!");
             return;
@@ -70,9 +88,55 @@ public class BluetoothHelper {
                 characteristicRead.getService().getUuid().toString(),
                 characteristicRead.getUuid().toString(),
                 notifyCallback);
+
+
     }
 
-    public void sendMessage(byte[] msg) {
+
+    private static class SendThread extends Thread {
+
+        private BlockingQueue<byte[]> mPendingQueue = new ArrayBlockingQueue<>(100);
+        /**
+         * 支持并发原子类
+         */
+        private AtomicBoolean runFlag = new AtomicBoolean(true);
+
+        @Override
+        public void run() {
+            super.run();
+            while (!isInterrupted() && runFlag.get()) {
+                try {
+                    byte[] take = mPendingQueue.take();
+                    BluetoothHelper.getInstance().sendRealMessage(take);
+                    sleep(120);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        public void end() {
+            runFlag.set(false);
+        }
+
+        public void sendMsg(byte[] msg) {
+            try {
+                mPendingQueue.put(msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Log.e("lm", "存入数据异常!" + e.getMessage());
+            }
+        }
+
+    }
+
+    public void senMessage(byte[] msg) {
+        sendThread.sendMsg(msg);
+    }
+
+
+    public void sendRealMessage(byte[] msg) {
         if (bleDevice == null || characteristicWrite == null) {
             Log.e("lm", "蓝牙服务异常!");
             return;
@@ -106,7 +170,7 @@ public class BluetoothHelper {
     private BleNotifyCallback notifyCallback = new BleNotifyCallback() {
         @Override
         public void onNotifySuccess() {
-            Log.e("lm", "打开通知操作成功");
+            Log.d("lm", "打开通知操作成功");
 
         }
 
@@ -124,10 +188,13 @@ public class BluetoothHelper {
     };
 
     public void disconnect() {
-        if (bleDevice == null) {
-            return;
+        if (sendThread != null) {
+            sendThread.end();
         }
-        BleManager.getInstance().disconnect(bleDevice);
+        if (bleDevice != null) {
+            BleManager.getInstance().disconnect(bleDevice);
+        }
+
     }
 
     static class Instance {

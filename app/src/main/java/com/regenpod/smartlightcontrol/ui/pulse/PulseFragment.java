@@ -48,45 +48,17 @@ public class PulseFragment extends BaseFragment {
                 int ht850Progress = ht850OperateHelper.getProgress();
                 int dc660Progress = dc660OperateHelper.getProgress();
                 int dc850Progress = dc850OperateHelper.getProgress();
-/*
-                byte by[] = new byte[6];
-                by[0] = TokenCommon.ANDROIDSENDROBOT;  //协议头
-                by[1] = TokenCommon.ANDROIDDEVICEID;    //设备id
-                by[2] = (byte) dateLength;  //  数据长度
-                by[3] = (byte) (~dateLength);   //  数据长度取反
-                by[4] = TokenCommon.REQUESTGETROBOTDATA; // 命令字：获取主控信息
-                by[5] = ByteUtil.getCheckSum(by);*/
+
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("ht660:" + ht660Progress);
                 sb.append("ht850:" + ht850Progress);
                 sb.append("dc660:" + dc660Progress);
                 sb.append("dc850:" + dc850Progress);
-                int head = 0XFB;
-                int cmd = 0X51;
-                String data = "1";
-                count = 0;
+                for (int i = 0; i < 20; i++) {
+                    BluetoothHelper.getInstance().senMessage(HexUtil.hexStringToBytes("FB010203"));
+                }
 
-
-                new Thread() {
-                    @Override
-                    public void run() {
-                        super.run();
-                        int i = 0;
-                        while (i <= 5) {
-                            i++;
-                            try {
-                                sleep(200);
-
-                                BluetoothHelper.getInstance().sendMessage(HexUtil.hexStringToBytes("FB010203"));
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-                }.start();
-//                handler.sendEmptyMessage(0);
                 Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
             }
 
@@ -94,41 +66,8 @@ public class PulseFragment extends BaseFragment {
         });
     }
 
-    public static void main(String[] args) {
-        Log.e("lm",encrypt(HexUtil.hexStringToBytes("5000")).toString());
-    }
 
-    public static byte[] encrypt(byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-        int len = bytes.length;
-        int key = 0x12;
-        for (int i = 0; i < len; i++) {
-            bytes[i] = (byte) (bytes[i] ^ key);
-            key = bytes[i];
-        }
-        return bytes;
-    }
 
-    int count = 0;
-    private Handler handler = new android.os.Handler() {
-        @Override
-        public void dispatchMessage(@NonNull Message msg) {
-            super.dispatchMessage(msg);
-            if (count <= 5) {
-                count++;
-                BluetoothHelper.getInstance().sendMessage(HexUtil.hexStringToBytes("FB 01 02 03"));
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendEmptyMessage(0);
-                    }
-                }, 200);
-            }
-
-        }
-    };
 
     public byte[] encrypt(byte[] bytes, int key) {
         if (bytes == null) {

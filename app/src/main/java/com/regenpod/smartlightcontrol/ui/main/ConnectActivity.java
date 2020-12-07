@@ -69,18 +69,6 @@ public class ConnectActivity extends BaseActivity {
     }
 
 
-    public static byte[] encrypt(byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-        int len = bytes.length;
-        int key = 0x12;
-        for (int i = 0; i < len; i++) {
-            bytes[i] = (byte) (bytes[i] ^ key);
-            key = bytes[i];
-        }
-        return bytes;
-    }
     private void initAdapter() {
         mAdapter = new BaseRecycleViewAdapter<BleDevice>(R.layout.item_device_layout, false, true) {
             @Override
@@ -209,6 +197,7 @@ public class ConnectActivity extends BaseActivity {
                 .setScanTimeOut(10000)              // 扫描超时时间，可选，默认10秒
                 .build();
         BleManager.getInstance().initScanRule(scanRuleConfig);
+
     }
 
     private void startScan() {
@@ -248,7 +237,6 @@ public class ConnectActivity extends BaseActivity {
 
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
-
                 Toast.makeText(aty, getString(R.string.connect_fail), Toast.LENGTH_LONG).show();
             }
 
