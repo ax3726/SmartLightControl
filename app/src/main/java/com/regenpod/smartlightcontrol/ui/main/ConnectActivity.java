@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,8 +65,8 @@ public class ConnectActivity extends BaseActivity {
         showConnectedDevice();
         checkPermissions();
 
-       int a=50^00;
-        System.out.println("最后："+a);
+        int a = 50 ^ 00;
+        System.out.println("最后：" + a);
     }
 
 
@@ -77,10 +78,10 @@ public class ConnectActivity extends BaseActivity {
                         .setOnClickListener(R.id.btn_connect, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                               if (!BleManager.getInstance().isConnected(item)) {
+                                if (!BleManager.getInstance().isConnected(item)) {
                                     BleManager.getInstance().cancelScan();
                                     connect(item);
-                                    Toast.makeText(aty, "正在连接蓝牙", Toast.LENGTH_SHORT).show();
+
                                 }
                             }
                         });
@@ -129,6 +130,24 @@ public class ConnectActivity extends BaseActivity {
         if (!permissionDeniedList.isEmpty()) {
             String[] deniedPermissions = permissionDeniedList.toArray(new String[permissionDeniedList.size()]);
             ActivityCompat.requestPermissions(this, deniedPermissions, REQUEST_CODE_PERMISSION_LOCATION);
+        }
+    }
+
+    @Override
+    public final void onRequestPermissionsResult(int requestCode,
+                                                 @NonNull String[] permissions,
+                                                 @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_LOCATION:
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            onPermissionGranted(permissions[i]);
+                        }
+                    }
+                }
+                break;
         }
     }
 
@@ -233,23 +252,24 @@ public class ConnectActivity extends BaseActivity {
         BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
             @Override
             public void onStartConnect() {
+                showLoading();
             }
 
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
+                closeLoading();
                 Toast.makeText(aty, getString(R.string.connect_fail), Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-               BluetoothHelper.getInstance().init(bleDevice);
-                Toast.makeText(aty, "连接成功", Toast.LENGTH_LONG).show();
+                closeLoading();
+                BluetoothHelper.getInstance().init(bleDevice);
                 startActivity(new Intent(aty, MainActivity.class));
             }
 
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
-
                 if (isActiveDisConnected) {
                     Toast.makeText(aty, getString(R.string.active_disconnected), Toast.LENGTH_LONG).show();
                 } else {
