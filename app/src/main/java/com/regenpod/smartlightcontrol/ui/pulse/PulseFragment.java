@@ -1,15 +1,10 @@
 package com.regenpod.smartlightcontrol.ui.pulse;
 
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.clj.fastble.utils.HexUtil;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseFragment;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
@@ -56,7 +51,6 @@ public class PulseFragment extends BaseFragment {
                 sb.append("ht850:" + ht850Progress);
                 sb.append("dc660:" + dc660Progress);
                 sb.append("dc850:" + dc850Progress);
-
                 BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 05, ht660Progress));
                 BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 06, ht850Progress));
                 BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 03, dc660Progress));

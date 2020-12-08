@@ -108,7 +108,7 @@ public class BluetoothHelper {
                 try {
                     byte[] take = mPendingQueue.take();
                     BluetoothHelper.getInstance().sendRealMessage(take);
-                    sleep(120);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -147,7 +147,6 @@ public class BluetoothHelper {
                 characteristicWrite.getService().getUuid().toString(),
                 characteristicWrite.getUuid().toString(),
                 msg,
-                false,
                 writeCallback);
     }
 

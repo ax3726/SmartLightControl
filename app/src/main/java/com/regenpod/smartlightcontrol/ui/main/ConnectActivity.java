@@ -65,8 +65,6 @@ public class ConnectActivity extends BaseActivity {
         showConnectedDevice();
         checkPermissions();
 
-        int a = 50 ^ 00;
-        System.out.println("最后：" + a);
     }
 
 

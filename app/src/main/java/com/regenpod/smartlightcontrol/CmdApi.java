@@ -1,7 +1,5 @@
 package com.regenpod.smartlightcontrol;
 
-import android.util.Log;
-
 import com.clj.fastble.utils.HexUtil;
 
 public class CmdApi {
@@ -20,7 +18,7 @@ public class CmdApi {
     /**
      * 获取设备信息.
      */
-    public static final int SYS_INFO = 0x50;
+    public static final int SYS_INFO = 0X50;
     /**
      * 获取设备状态
      */
@@ -52,15 +50,19 @@ public class CmdApi {
 
     }
 
+    private static String toHex(int value) {
+        return Integer.toHexString(value);
+    }
 
     public static byte[] createMessage(Integer cmd, Integer data, Integer value) {
+
         if (value == null) {
             int check = cmd ^ data;
-            return HexUtil.hexStringToBytes(MSG_HEAD + cmd + data + check + MSG_FOOTER);
+            return HexUtil.hexStringToBytes(MSG_HEAD + cmd + toHex(data) + toHex(check) + MSG_FOOTER);
         } else {
             String datas = data + value + "";
             int check = cmd ^ Integer.valueOf(datas);
-            return HexUtil.hexStringToBytes(MSG_HEAD + cmd + data + value + check + MSG_FOOTER);
+            return HexUtil.hexStringToBytes(MSG_HEAD + cmd + toHex(data) + toHex(value) + toHex(check) + MSG_FOOTER);
         }
     }
 
