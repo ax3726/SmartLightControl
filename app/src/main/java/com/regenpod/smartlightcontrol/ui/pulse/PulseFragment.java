@@ -13,6 +13,7 @@ import com.clj.fastble.utils.HexUtil;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseFragment;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
+import com.regenpod.smartlightcontrol.CmdApi;
 import com.regenpod.smartlightcontrol.R;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
 
@@ -48,25 +49,24 @@ public class PulseFragment extends BaseFragment {
                 int ht850Progress = ht850OperateHelper.getProgress();
                 int dc660Progress = dc660OperateHelper.getProgress();
                 int dc850Progress = dc850OperateHelper.getProgress();
-
-
                 StringBuilder sb = new StringBuilder();
+//                BluetoothHelper.getInstance().senMessage(HexUtil.hexStringToBytes("FB010203"));
+
                 sb.append("ht660:" + ht660Progress);
                 sb.append("ht850:" + ht850Progress);
                 sb.append("dc660:" + dc660Progress);
                 sb.append("dc850:" + dc850Progress);
-                for (int i = 0; i < 20; i++) {
-                    BluetoothHelper.getInstance().senMessage(HexUtil.hexStringToBytes("FB010203"));
-                }
 
+                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 05, ht660Progress));
+                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 06, ht850Progress));
+                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 03, dc660Progress));
+                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 04, dc850Progress));
                 Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
             }
 
 
         });
     }
-
-
 
 
     public byte[] encrypt(byte[] bytes, int key) {
