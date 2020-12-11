@@ -7,12 +7,12 @@ public class CmdApi {
     /**
      * 帧头
      */
-    public static final String MSG_HEAD = "FB";
+    public static final int MSG_HEAD = 0xFB;
 
     /**
      * 帧尾
      */
-    public static final String MSG_FOOTER = "BF";
+    public static final int MSG_FOOTER = 0xBF;
 
     //********以下是cmd 指令********
     /**
@@ -54,16 +54,16 @@ public class CmdApi {
         return Integer.toHexString(value);
     }
 
-    public static byte[] createMessage(Integer cmd, Integer data, Integer value) {
-
-        if (value == null) {
-            int check = cmd ^ data;
-            return HexUtil.hexStringToBytes(MSG_HEAD + cmd + toHex(data) + toHex(check) + MSG_FOOTER);
-        } else {
-            String datas = data + value + "";
-            int check = cmd ^ Integer.valueOf(datas);
-            return HexUtil.hexStringToBytes(MSG_HEAD + cmd + toHex(data) + toHex(value) + toHex(check) + MSG_FOOTER);
-        }
+    public static byte[] createMessage(int cmd, int data, Integer value) {
+        int datas = Integer.valueOf(value == null ? data + "" : data + value + "");
+        int check = cmd ^ datas;
+        byte[] bytes = new byte[5];
+        bytes[0] = (byte) MSG_HEAD;
+        bytes[1] = (byte) cmd;
+        bytes[2] = (byte) datas;
+        bytes[3] = (byte) check;
+        bytes[4] = (byte) MSG_FOOTER;
+        return bytes;
     }
 
 

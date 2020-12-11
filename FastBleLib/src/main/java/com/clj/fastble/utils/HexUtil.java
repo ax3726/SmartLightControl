@@ -83,7 +83,18 @@ public class HexUtil {
 
         return out;
     }
-
+    /**
+     * 字节数组转16进制字符串
+     * @param b
+     * @return
+     */
+    public static String byteArrToHexString(byte[] b){
+        String result="";
+        for (int i=0; i < b.length; i++) {
+            result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
 
     protected static int toDigit(char ch, int index) {
         int digit = Character.digit(ch, 16);

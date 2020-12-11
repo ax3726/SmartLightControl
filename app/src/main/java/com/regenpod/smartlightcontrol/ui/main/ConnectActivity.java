@@ -79,7 +79,6 @@ public class ConnectActivity extends BaseActivity {
                                 if (!BleManager.getInstance().isConnected(item)) {
                                     BleManager.getInstance().cancelScan();
                                     connect(item);
-
                                 }
                             }
                         });
