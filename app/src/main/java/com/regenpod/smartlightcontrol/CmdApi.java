@@ -218,14 +218,16 @@ public class CmdApi {
                 break;
             case SYS_STATUS: //设备状态
                 //设备属性值
-                if (validData.length() > 2) {
+                if (validData.length() > 4) {
                     //控制指令
                     int controlCommand = Integer.parseInt(validData.substring(2, 4), 16);
+
+                    String substring = validData.substring(4);
                     //值
-                    int value = Integer.parseInt(validData.substring(4), 16);
+                    int value = Integer.parseInt(substring, 16);
                     //发送值
                     EventBus.getDefault().postSticky(new ControlBean(controlCommand, value));
-                } else if (validData.length() == 2) {
+                } else if (validData.length() == 4) {
                     int status = Integer.parseInt(validData.substring(2), 16);
                     //发送设备状态值
                     EventBus.getDefault().postSticky(new StatusBean(status));

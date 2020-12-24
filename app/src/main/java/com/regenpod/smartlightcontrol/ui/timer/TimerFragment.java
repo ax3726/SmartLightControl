@@ -1,7 +1,6 @@
 package com.regenpod.smartlightcontrol.ui.timer;
 
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -17,10 +16,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_FER;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
@@ -47,7 +42,7 @@ public class TimerFragment extends BaseFragment {
                     showToast("Device is not turned on!");
                     return;
                 }
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, timerOperateHelper.getProgress()));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, timerOperateHelper.getProgress()*60));
                 showToast("send success！");
             }
         });
@@ -88,7 +83,7 @@ public class TimerFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getControlEvent(ControlBean controlBean) {
         if (controlBean.getCommand() == SYS_CONTROL_TIME) {
-            timerOperateHelper.setProgress(controlBean.getValue());
+            timerOperateHelper.setProgress(controlBean.getValue()/60);
         }
     }
 

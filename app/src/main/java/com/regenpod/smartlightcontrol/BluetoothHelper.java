@@ -23,10 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BluetoothHelper {
 
-    public static final int SEND_SUECSS = 0;
-    public static final int SEND_FAIL = 1;
-    public static final int READ_SUCESS = 2;
-    public static final int READ_FAIL = 2;
+    public static final int SEND_SUECSS = 100;
+    public static final int SEND_FAIL = 200;
+    public static final int READ_SUCESS = 300;
+    public static final int READ_FAIL = 400;
     private BleDevice bleDevice;
     private BluetoothGattCharacteristic characteristicWrite = null;
     private BluetoothGattCharacteristic characteristicRead = null;
@@ -36,9 +36,13 @@ public class BluetoothHelper {
         @Override
         public void dispatchMessage(@NonNull Message msg) {
             super.dispatchMessage(msg);
+            if (msg.obj==null) {
+                return;
+            }
             switch (msg.what) {
                 case SEND_SUECSS:
-                    Log.e("lm", "发送消息 >>> " + new String((byte[]) msg.obj));
+                    String sends = HexUtil.byteArrToHexString((byte[]) msg.obj);
+                    Log.d("lm", "发送消息 >>>" + sends);
                     break;
                 case SEND_FAIL:
                     Log.e("lm", "write fail" + msg.obj.toString());
@@ -46,13 +50,17 @@ public class BluetoothHelper {
                 case READ_SUCESS:
                     String message = HexUtil.formatHexString((byte[]) msg.obj);
                     CmdApi.analyzeInstruction(message);
-                    Log.e("lm", "收到消息 >>> " + message);
+                    Log.d("lm", "收到消息 >>> " + message);
                     break;
             }
 
 
         }
     };
+
+    public void postDelayed(Runnable runnable, long delayMillis) {
+        handler.postDelayed(runnable, delayMillis);
+    }
 
 
     public static BluetoothHelper getInstance() {
@@ -147,7 +155,6 @@ public class BluetoothHelper {
             Log.e("lm", "蓝牙服务异常!");
             return;
         }
-
         BleManager.getInstance().write(
                 bleDevice,
                 characteristicWrite.getService().getUuid().toString(),

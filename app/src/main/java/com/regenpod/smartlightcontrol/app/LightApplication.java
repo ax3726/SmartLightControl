@@ -20,6 +20,7 @@ public class LightApplication extends Application {
         BleManager.getInstance()
                 .enableLog(true)
                 .setReConnectCount(1, 5000)
+                .setSplitWriteNum(512)
                 .setConnectOverTime(20000)
                 .setOperateTimeout(5000);
     }

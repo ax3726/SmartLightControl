@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.fragment.app.Fragment;
@@ -14,7 +13,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
-import com.regenpod.smartlightcontrol.CmdApi;
 import com.regenpod.smartlightcontrol.R;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
 import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
@@ -29,7 +27,17 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.regenpod.smartlightcontrol.CmdApi.*;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_FER;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_START;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_STOP;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS_RUNNING;
+import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 public class MainActivity extends BaseActivity {
     private BaseCommonViewHolder baseCommonViewHolder;
@@ -92,13 +100,22 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         initFragment();
-        loadCommand();
+        showLoading();
+        BluetoothHelper.getInstance().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadCommand();
+                closeLoading();
+            }
+        },3000);
     }
 
     @Override
     protected void releaseData() {
 
     }
+
+
 
     private void initFragment() {
         mPulseFragment = new PulseFragment();
