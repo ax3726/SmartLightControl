@@ -107,14 +107,13 @@ public class MainActivity extends BaseActivity {
                 loadCommand();
                 closeLoading();
             }
-        },3000);
+        }, 3000);
     }
 
     @Override
     protected void releaseData() {
 
     }
-
 
 
     private void initFragment() {
@@ -156,21 +155,19 @@ public class MainActivity extends BaseActivity {
      */
     private void loadCommand() {
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
+
+        //读取设备控制值
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getSwitchEvent(SwitchDeviceBen switchDeviceBen) {
-        BluetoothHelper.getInstance().setDeiceRunning(switchDeviceBen.isSwitch());
         closeLoading();
-        if (switchDeviceBen.isSwitch()) {
-            //读取设备控制值
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
-        }
         showToast(switchDeviceBen.isSwitch() ? "turn on success!" : "turn off success!");
     }
 
@@ -179,18 +176,11 @@ public class MainActivity extends BaseActivity {
     public void getStatusEvent(StatusBean statusBean) {
         switch (statusBean.getStatus()) {
             case SYS_STATUS_RUNNING: //运行状态
-                BluetoothHelper.getInstance().setDeiceRunning(true);
                 baseCommonViewHolder.setSelect(R.id.img_switch, true);
-                //读取设备控制值
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
                 break;
             default://设备未启动 或者异常状态
-                BluetoothHelper.getInstance().setDeiceRunning(false);
                 baseCommonViewHolder.setSelect(R.id.img_switch, false);
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
                 break;
         }
     }

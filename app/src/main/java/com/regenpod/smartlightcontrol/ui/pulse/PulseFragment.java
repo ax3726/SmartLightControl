@@ -1,14 +1,12 @@
 package com.regenpod.smartlightcontrol.ui.pulse;
 
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProviders;
 
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseFragment;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
-import com.regenpod.smartlightcontrol.CmdApi;
 import com.regenpod.smartlightcontrol.R;
 import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
@@ -17,7 +15,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import static com.regenpod.smartlightcontrol.CmdApi.*;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_FER;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 
 public class PulseFragment extends BaseFragment {
@@ -47,10 +50,6 @@ public class PulseFragment extends BaseFragment {
         baseCommonViewHolder.setOnClickListener(R.id.img_ok, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BluetoothHelper.getInstance().isDeiceRunning()) {
-                    showToast("Device is not turned on!");
-                    return;
-                }
                 int ht660Progress = ht660OperateHelper.getProgress();
                 int ht850Progress = ht850OperateHelper.getProgress();
                 int dc660Progress = dc660OperateHelper.getProgress();
