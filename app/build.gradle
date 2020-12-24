@@ -29,7 +29,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.3'
-
+    implementation 'org.greenrobot:eventbus:3.1.1'
     implementation project(path: ':FastBleLib')
     implementation project(path: ':common')
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'

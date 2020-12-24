@@ -7,8 +7,22 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseFragment;
+import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
+import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_FER;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
+import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 public class TimerFragment extends BaseFragment {
     private BaseCommonViewHolder baseCommonViewHolder;
@@ -29,13 +43,11 @@ public class TimerFragment extends BaseFragment {
         baseCommonViewHolder.setOnClickListener(R.id.img_ok, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int timerProgress = timerOperateHelper.getProgress();
-               /* StringBuilder sb = new StringBuilder();
-                sb.append("timer:" + timerProgress);
-                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();*/
-                Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, timerOperateHelper.getProgress()));
+                Toast.makeText(aty, "send success！", Toast.LENGTH_SHORT).show();
             }
         });
+        EventBus.getDefault().register(this);
     }
 
     private void initTimer() {
@@ -67,7 +79,13 @@ public class TimerFragment extends BaseFragment {
                         return progress + "mins";
                     }
                 });
-        timerOperateHelper.setProgress(20);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getControlEvent(ControlBean controlBean) {
+        if (controlBean.getCommand() == SYS_CONTROL_TIME) {
+            timerOperateHelper.setProgress(controlBean.getValue());
+        }
     }
 
     @Override
@@ -78,5 +96,11 @@ public class TimerFragment extends BaseFragment {
     @Override
     protected void releaseData() {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 }

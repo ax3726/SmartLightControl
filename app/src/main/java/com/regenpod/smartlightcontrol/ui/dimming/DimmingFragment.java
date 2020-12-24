@@ -9,8 +9,19 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseFragment;
+import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
+import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 public class DimmingFragment extends BaseFragment {
 
@@ -41,13 +52,12 @@ public class DimmingFragment extends BaseFragment {
             public void onClick(View v) {
                 int dm660Progress = dm660OperateHelper.getProgress();
                 int dm850Progress = dm850OperateHelper.getProgress();
-      /*          StringBuilder sb = new StringBuilder();
-                sb.append("dm660:" + dm660Progress);
-                sb.append("\ndm850:" + dm850Progress);
-                Toast.makeText(aty, sb.toString(), Toast.LENGTH_SHORT).show();*/
-                Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, dm660Progress));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, dm850Progress));
+                Toast.makeText(aty, "send success！", Toast.LENGTH_SHORT).show();
             }
         });
+        EventBus.getDefault().register(this);
     }
 
     private void initDm660() {
@@ -79,7 +89,6 @@ public class DimmingFragment extends BaseFragment {
                         return progress + "%";
                     }
                 });
-        dm660OperateHelper.setProgress(20);
     }
 
     private void initDm850() {
@@ -111,7 +120,18 @@ public class DimmingFragment extends BaseFragment {
                         return progress + "%";
                     }
                 });
-        dm850OperateHelper.setProgress(30);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getControlEvent(ControlBean controlBean) {
+        switch (controlBean.getCommand()) {
+            case SYS_CONTROL_R_PWM:// 写入红灯占空比  dc660
+                dm660OperateHelper.setProgress(controlBean.getValue());
+                break;
+            case SYS_CONTROL_RW_PWM:// 写入红灯频率  dc850
+                dm850OperateHelper.setProgress(controlBean.getValue());
+                break;
+        }
     }
 
     @Override
@@ -122,5 +142,11 @@ public class DimmingFragment extends BaseFragment {
     @Override
     protected void releaseData() {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 }

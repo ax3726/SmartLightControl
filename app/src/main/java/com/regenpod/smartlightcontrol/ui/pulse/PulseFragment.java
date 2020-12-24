@@ -10,7 +10,14 @@ import com.lm.common.base.BaseFragment;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.CmdApi;
 import com.regenpod.smartlightcontrol.R;
+import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import static com.regenpod.smartlightcontrol.CmdApi.*;
 
 
 public class PulseFragment extends BaseFragment {
@@ -44,22 +51,36 @@ public class PulseFragment extends BaseFragment {
                 int ht850Progress = ht850OperateHelper.getProgress();
                 int dc660Progress = dc660OperateHelper.getProgress();
                 int dc850Progress = dc850OperateHelper.getProgress();
-                StringBuilder sb = new StringBuilder();
-//                BluetoothHelper.getInstance().senMessage(HexUtil.hexStringToBytes("FB010203"));
 
-                sb.append("ht660:" + ht660Progress);
-                sb.append("ht850:" + ht850Progress);
-                sb.append("dc660:" + dc660Progress);
-                sb.append("dc850:" + dc850Progress);
-                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 05, ht660Progress));
-                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 06, ht850Progress));
-                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 03, dc660Progress));
-                BluetoothHelper.getInstance().senMessage(CmdApi.createMessage(CmdApi.SYS_CONTROL, 04, dc850Progress));
-                Toast.makeText(aty, "设置成功！", Toast.LENGTH_SHORT).show();
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_FER, ht660Progress));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_FER, ht850Progress));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, dc660Progress));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, dc850Progress));
+                Toast.makeText(aty, "send success！", Toast.LENGTH_SHORT).show();
             }
 
 
         });
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getControlEvent(ControlBean controlBean) {
+        switch (controlBean.getCommand()) {
+            case SYS_CONTROL_R_FER:// 红灯频率  ht660
+                ht660OperateHelper.setProgress(controlBean.getValue());
+                break;
+            case SYS_CONTROL_RW_FER:// 红外灯频率  ht850
+                ht850OperateHelper.setProgress(controlBean.getValue());
+                break;
+            case SYS_CONTROL_R_PWM:// 写入红灯占空比  dc660
+                dc660OperateHelper.setProgress(controlBean.getValue());
+                break;
+            case SYS_CONTROL_RW_PWM:// 写入红灯频率  dc850
+                dc850OperateHelper.setProgress(controlBean.getValue());
+                break;
+        }
     }
 
 
@@ -117,7 +138,6 @@ public class PulseFragment extends BaseFragment {
                         return progress + "HZ";
                     }
                 });
-        ht660OperateHelper.setProgress(200);
     }
 
     private void initHt850() {
@@ -149,7 +169,6 @@ public class PulseFragment extends BaseFragment {
                         return progress + "HZ";
                     }
                 });
-        ht850OperateHelper.setProgress(100);
     }
 
     private void initDc660() {
@@ -181,7 +200,6 @@ public class PulseFragment extends BaseFragment {
                         return progress + "%";
                     }
                 });
-        dc660OperateHelper.setProgress(20);
     }
 
 
@@ -214,7 +232,6 @@ public class PulseFragment extends BaseFragment {
                         return progress + "%";
                     }
                 });
-        dc850OperateHelper.setProgress(30);
     }
 
 
@@ -226,5 +243,11 @@ public class PulseFragment extends BaseFragment {
     @Override
     protected void releaseData() {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 }

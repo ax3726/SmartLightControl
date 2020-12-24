@@ -44,12 +44,9 @@ public class BluetoothHelper {
                     Log.e("lm", "write fail" + msg.obj.toString());
                     break;
                 case READ_SUCESS:
-
-
                     String message = HexUtil.formatHexString((byte[]) msg.obj);
+                    CmdApi.analyzeInstruction(message);
                     Log.e("lm", "收到消息 >>> " + message);
-
-
                     break;
             }
 

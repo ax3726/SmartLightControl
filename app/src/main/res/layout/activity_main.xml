@@ -30,17 +30,16 @@
             android:text="Bluetooth"
             android:textSize="12sp"
             android:layout_marginRight="3dp"
-            android:layout_toLeftOf="@+id/rb_switch"
+            android:layout_toLeftOf="@+id/img_switch"
             android:textColor="@color/colorWhite" />
 
-        <RadioButton
-            android:id="@+id/rb_switch"
+        <ImageView
+            android:id="@+id/img_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="11dp"
             android:background="@drawable/selector_on_off"
-            android:button="@null"
            />
     </RelativeLayout>
 
