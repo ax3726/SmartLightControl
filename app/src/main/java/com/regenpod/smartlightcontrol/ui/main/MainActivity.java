@@ -78,10 +78,10 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if (baseCommonViewHolder.isSelected(R.id.img_switch)) {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_STOP, -1));
-                    showLoading("正在关机中...");
+                    showLoading("Shutting down...");
                 } else {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
-                    showLoading("正在开机中...");
+                    showLoading("Booting up...");
                 }
                 checkDialog();
             }
