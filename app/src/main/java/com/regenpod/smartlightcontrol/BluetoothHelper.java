@@ -31,7 +31,7 @@ public class BluetoothHelper {
     private BluetoothGattCharacteristic characteristicWrite = null;
     private BluetoothGattCharacteristic characteristicRead = null;
     private SendThread sendThread = null;
-
+    private boolean isDeiceRunning = false;
     private static Handler handler = new Handler() {
         @Override
         public void dispatchMessage(@NonNull Message msg) {
@@ -59,6 +59,13 @@ public class BluetoothHelper {
         return Instance.instance;
     }
 
+    public boolean isDeiceRunning() {
+        return isDeiceRunning;
+    }
+
+    public void setDeiceRunning(boolean deiceRunning) {
+        isDeiceRunning = deiceRunning;
+    }
 
     public void init(BleDevice bleDevice) {
         this.bleDevice = bleDevice;

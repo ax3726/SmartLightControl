@@ -1,6 +1,7 @@
 package com.regenpod.smartlightcontrol.ui.main;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -91,6 +92,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         initFragment();
+        loadCommand();
     }
 
     @Override
@@ -137,13 +139,12 @@ public class MainActivity extends BaseActivity {
      */
     private void loadCommand() {
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
-
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getSwitchEvent(SwitchDeviceBen switchDeviceBen) {
-        showToast(switchDeviceBen.isSwitch() ? "turn on success!" : "turn off success!");
+        BluetoothHelper.getInstance().setDeiceRunning(switchDeviceBen.isSwitch());
         closeLoading();
         if (switchDeviceBen.isSwitch()) {
             //读取设备控制值
@@ -153,6 +154,7 @@ public class MainActivity extends BaseActivity {
             BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1));
             BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
         }
+        showToast(switchDeviceBen.isSwitch() ? "turn on success!" : "turn off success!");
     }
 
 
@@ -160,6 +162,7 @@ public class MainActivity extends BaseActivity {
     public void getStatusEvent(StatusBean statusBean) {
         switch (statusBean.getStatus()) {
             case SYS_STATUS_RUNNING: //运行状态
+                BluetoothHelper.getInstance().setDeiceRunning(true);
                 baseCommonViewHolder.setSelect(R.id.img_switch, true);
                 //读取设备控制值
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
@@ -169,11 +172,34 @@ public class MainActivity extends BaseActivity {
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
                 break;
             default://设备未启动 或者异常状态
+                BluetoothHelper.getInstance().setDeiceRunning(false);
                 baseCommonViewHolder.setSelect(R.id.img_switch, false);
                 break;
         }
     }
 
+    /**
+     * 用来计算返回键的点击间隔时间
+     */
+    private long exitTime = 0;
+    public static final int TIME_DOUBLE_CLICK = 2000;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - exitTime) > TIME_DOUBLE_CLICK) {
+                //弹出提示，可以有多种方式
+                showToast("Press again to exit the program!");
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+            }
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     protected void onDestroy() {

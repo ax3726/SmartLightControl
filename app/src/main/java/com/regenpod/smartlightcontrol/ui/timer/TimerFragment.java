@@ -43,8 +43,12 @@ public class TimerFragment extends BaseFragment {
         baseCommonViewHolder.setOnClickListener(R.id.img_ok, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BluetoothHelper.getInstance().isDeiceRunning()) {
+                    showToast("Device is not turned on!");
+                    return;
+                }
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, timerOperateHelper.getProgress()));
-                Toast.makeText(aty, "send success！", Toast.LENGTH_SHORT).show();
+                showToast("send success！");
             }
         });
         EventBus.getDefault().register(this);

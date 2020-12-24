@@ -50,11 +50,15 @@ public class DimmingFragment extends BaseFragment {
         baseCommonViewHolder.setOnClickListener(R.id.img_ok, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BluetoothHelper.getInstance().isDeiceRunning()) {
+                    showToast("Device is not turned on!");
+                    return;
+                }
                 int dm660Progress = dm660OperateHelper.getProgress();
                 int dm850Progress = dm850OperateHelper.getProgress();
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, dm660Progress));
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, dm850Progress));
-                Toast.makeText(aty, "send success！", Toast.LENGTH_SHORT).show();
+                showToast("send success！");
             }
         });
         EventBus.getDefault().register(this);
