@@ -87,7 +87,7 @@ public class CmdApi {
     public static final int SYS_CONTROL_START = 8;
 
     /**
-     * 设备控制---设备正式启动
+     * 设备控制---设备停止
      */
     public static final int SYS_CONTROL_STOP = 0;
 
@@ -116,6 +116,10 @@ public class CmdApi {
     }
 
     public static byte[] createMessage(int cmd, int data, int value) {
+        return createMessage(cmd, data, value, false);
+    }
+
+    public static byte[] createMessage(int cmd, int data, int value, boolean isHighZero) {
         if (data == -1) {
             byte[] bytes = new byte[4];
             bytes[0] = (byte) MSG_HEAD;
@@ -165,14 +169,28 @@ public class CmdApi {
                 return bytes;
             } else {
                 check = cmd ^ data ^ value;
-                byte[] bytes = new byte[6];
-                bytes[0] = (byte) MSG_HEAD;
-                bytes[1] = (byte) cmd;
-                bytes[2] = (byte) data;
-                bytes[3] = (byte) value;
-                bytes[4] = (byte) check;
-                bytes[5] = (byte) MSG_FOOTER;
-                return bytes;
+                if (isHighZero) {
+                    byte[] bytes = new byte[7];
+                    bytes[0] = (byte) MSG_HEAD;
+                    bytes[1] = (byte) cmd;
+                    bytes[2] = (byte) data;
+                    bytes[3] = (byte) 0X00;
+                    bytes[4] = (byte) value;
+                    bytes[5] = (byte) check;
+                    bytes[6] = (byte) MSG_FOOTER;
+                    return bytes;
+                } else {
+                    byte[] bytes = new byte[6];
+                    bytes[0] = (byte) MSG_HEAD;
+                    bytes[1] = (byte) cmd;
+                    bytes[2] = (byte) data;
+                    bytes[3] = (byte) value;
+                    bytes[4] = (byte) check;
+                    bytes[5] = (byte) MSG_FOOTER;
+                    return bytes;
+                }
+
+
             }
         }
     }

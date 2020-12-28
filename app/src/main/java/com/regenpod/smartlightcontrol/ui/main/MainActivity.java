@@ -159,8 +159,8 @@ public class MainActivity extends BaseActivity {
         //读取设备控制值
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1,true));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1,true));
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
     }
 
@@ -169,6 +169,7 @@ public class MainActivity extends BaseActivity {
     public void getSwitchEvent(SwitchDeviceBen switchDeviceBen) {
         closeLoading();
         showToast(switchDeviceBen.isSwitch() ? "turn on success!" : "turn off success!");
+        baseCommonViewHolder.setSelect(R.id.img_switch, switchDeviceBen.isSwitch());
     }
 
 
