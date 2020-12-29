@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.clj.fastble.utils.HexUtil;
 import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
+import com.regenpod.smartlightcontrol.ui.bean.DeviceInfoBean;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
 import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
 
@@ -27,6 +28,20 @@ public class CmdApi {
      * 获取设备信息.
      */
     public static final int SYS_INFO = 0X50;
+
+    /**
+     * 获取设备机型 (必需实现).
+     */
+    public static final int SYS_INFO_MODEL = 0;
+    /**
+     * 获取设备联机地址
+     */
+    public static final int SYS_INFO_ADDRESS = 1;
+    /**
+     * 获取设备软件、硬件版本号
+     */
+    public static final int SYS_INFO_VER = 2;
+
     /**
      * 获取设备状态
      */
@@ -232,7 +247,39 @@ public class CmdApi {
 
         switch (command) {
             case SYS_INFO: //设备信息
+                if (validData.length() > 4) {
+                    //指令
+                    int controlCommand = Integer.parseInt(validData.substring(2, 4), 16);
+                    String substring = validData.substring(4);
+                    DeviceInfoBean deviceInfoBean = new DeviceInfoBean();
+                    deviceInfoBean.setStatus(controlCommand);
+                    switch (controlCommand) {
+                        case SYS_INFO_ADDRESS://获取设备联机地址
+                            int value = Integer.parseInt(substring, 16);
+                            deviceInfoBean.setAddress(value);
+                            EventBus.getDefault().postSticky(deviceInfoBean);
+                            break;
+                        case SYS_INFO_VER://获取设备软件、硬件版本号
+                            if (substring.length() == 4) {
+                                int softwareVersion = Integer.parseInt(substring.substring(0, 2), 16);
+                                int hardwareVersion = Integer.parseInt(substring.substring(2, 4), 16);
+                                deviceInfoBean.setSoftwareVersion(softwareVersion);
+                                deviceInfoBean.setHardwareVersion(hardwareVersion);
+                                EventBus.getDefault().postSticky(deviceInfoBean);
+                            }
+                            break;
+                        case SYS_INFO_MODEL://获取设备机型 (必需实现)
+                            if (substring.length() == 8) {
+                                String factory = hexStr2Str(substring.substring(0, 4));
+                                String model = hexStr2Str(substring.substring(4, 8));
+                                deviceInfoBean.setFactory(factory);
+                                deviceInfoBean.setModel(model);
+                                EventBus.getDefault().postSticky(deviceInfoBean);
+                            }
+                            break;
+                    }
 
+                }
                 break;
             case SYS_STATUS: //设备状态
                 //设备属性值
@@ -263,5 +310,23 @@ public class CmdApi {
 
     }
 
+    /**
+     * 十六进制转换字符串
+     *
+     * @param String str Byte字符串(Byte之间无分隔符 如:[616C6B])
+     * @return String 对应的字符串
+     */
+    public static String hexStr2Str(String hexStr) {
+        String str = "0123456789ABCDEF";
+        char[] hexs = hexStr.toCharArray();
+        byte[] bytes = new byte[hexStr.length() / 2];
+        int n;
 
+        for (int i = 0; i < bytes.length; i++) {
+            n = str.indexOf(hexs[2 * i]) * 16;
+            n += str.indexOf(hexs[2 * i + 1]);
+            bytes[i] = (byte) (n & 0xff);
+        }
+        return new String(bytes);
+    }
 }

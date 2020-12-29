@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 import androidx.fragment.app.Fragment;
@@ -14,11 +15,13 @@ import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
+import com.regenpod.smartlightcontrol.ui.bean.DeviceInfoBean;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
 import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
 import com.regenpod.smartlightcontrol.ui.dimming.DimmingFragment;
 import com.regenpod.smartlightcontrol.ui.pulse.PulseFragment;
 import com.regenpod.smartlightcontrol.ui.timer.TimerFragment;
+import com.regenpod.smartlightcontrol.widget.dialog.DeviceInfoDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,6 +38,10 @@ import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_START;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_STOP;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_INFO;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_INFO_ADDRESS;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_INFO_MODEL;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_INFO_VER;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS_RUNNING;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
@@ -48,6 +55,8 @@ public class MainActivity extends BaseActivity {
     private FragmentManager mFm;
     private FragmentTransaction mTransaction;
     private RadioGroup rgBottom;
+    private DeviceInfoBean deviceInfoBean;
+    private DeviceInfoDialog deviceInfoDialog;
 
     @Override
     protected int getLayoutId() {
@@ -57,6 +66,18 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView(Bundle savedInstanceState) {
         baseCommonViewHolder = new BaseCommonViewHolder(getWindow().getDecorView());
+        baseCommonViewHolder.setOnClickListener(R.id.tv_device_name, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deviceInfoBean = new DeviceInfoBean();
+                if (deviceInfoBean == null) {
+                    showToast("无设备信息！");
+                    return;
+                }
+                deviceInfoDialog = new DeviceInfoDialog(aty, deviceInfoBean);
+                deviceInfoDialog.show();
+            }
+        });
         rgBottom = findViewById(R.id.rg_bottom);
         rgBottom.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -154,14 +175,40 @@ public class MainActivity extends BaseActivity {
      * 读取设备状态
      */
     private void loadCommand() {
+        // 读取设备状态
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
+
+        // 读取设备信息
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_INFO, SYS_INFO_MODEL, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_INFO, SYS_INFO_ADDRESS, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_INFO, SYS_INFO_VER, -1));
 
         //读取设备控制值
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1,true));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1,true));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1, true));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1, true));
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getDeviceInfo(DeviceInfoBean deviceInfo) {
+        if (deviceInfoBean == null) {
+            deviceInfoBean = new DeviceInfoBean();
+        }
+        switch (deviceInfoBean.getStatus()) {
+            case SYS_INFO_ADDRESS://获取设备联机地址
+                deviceInfoBean.setAddress(deviceInfo.getAddress());
+                break;
+            case SYS_INFO_VER://获取设备软件、硬件版本号
+                deviceInfoBean.setSoftwareVersion(deviceInfo.getSoftwareVersion());
+                deviceInfoBean.setHardwareVersion(deviceInfo.getHardwareVersion());
+                break;
+            case SYS_INFO_MODEL://获取设备机型 (必需实现)
+                deviceInfoBean.setFactory(deviceInfo.getFactory());
+                deviceInfoBean.setModel(deviceInfo.getModel());
+                break;
+        }
     }
 
 

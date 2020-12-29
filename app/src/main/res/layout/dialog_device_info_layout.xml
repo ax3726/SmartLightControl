@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_second_bg"
+    android:orientation="vertical"
+    android:paddingLeft="15dp"
+    android:paddingTop="15dp"
+    android:paddingRight="15dp"
+    android:paddingBottom="15dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:text="设备信息"
+        android:textColor="@color/colorWhite"
+        android:textSize="17dp" />
+
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="联机地址:"
+        android:textColor="@color/colorWhite"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/tv_softwareVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="软件版本号:"
+        android:textColor="@color/colorWhite"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/tv_hardwareVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="硬件版本号:"
+        android:textColor="@color/colorWhite"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/tv_factory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="厂家:"
+        android:textColor="@color/colorWhite"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/tv_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="机型:"
+        android:textColor="@color/colorWhite"
+        android:textSize="14dp" />
+
+
+    <TextView
+        android:id="@+id/tv_ok"
+        android:layout_width="200dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="80dp"
+        android:background="@drawable/shape_ok_btn"
+        android:gravity="center"
+        android:text="确定"
+        android:textColor="@color/colorWhite"
+        android:textSize="14dp" />
+
+
+</LinearLayout>
