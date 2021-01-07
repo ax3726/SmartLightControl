@@ -19,16 +19,18 @@ public class OperateHelper {
     }
 
     private void initView() {
-        add.setOnClickListener(new View.OnClickListener() {
+        add.setOnTouchListener(new LongTouchListener(){
             @Override
-            public void onClick(View v) {
+            protected void onClick(View view) {
+                super.onClick(view);
                 progress = operateListener.getAdd(progress);
                 tvShow.setText(operateListener.showProgress(progress));
             }
         });
-        less.setOnClickListener(new View.OnClickListener() {
+        less.setOnTouchListener(new LongTouchListener(){
             @Override
-            public void onClick(View v) {
+            protected void onClick(View view) {
+                super.onClick(view);
                 progress = operateListener.getLess(progress);
                 tvShow.setText(operateListener.showProgress(progress));
             }

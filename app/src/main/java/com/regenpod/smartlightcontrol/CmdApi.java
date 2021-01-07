@@ -255,25 +255,20 @@ public class CmdApi {
                     deviceInfoBean.setStatus(controlCommand);
                     switch (controlCommand) {
                         case SYS_INFO_ADDRESS://获取设备联机地址
-                            int value = Integer.parseInt(substring, 16);
-                            deviceInfoBean.setAddress(value);
+                            deviceInfoBean.setAddress(substring);
                             EventBus.getDefault().postSticky(deviceInfoBean);
                             break;
                         case SYS_INFO_VER://获取设备软件、硬件版本号
                             if (substring.length() == 4) {
-                                int softwareVersion = Integer.parseInt(substring.substring(0, 2), 16);
-                                int hardwareVersion = Integer.parseInt(substring.substring(2, 4), 16);
-                                deviceInfoBean.setSoftwareVersion(softwareVersion);
-                                deviceInfoBean.setHardwareVersion(hardwareVersion);
+                                deviceInfoBean.setSoftwareVersion(substring.substring(0, 2));
+                                deviceInfoBean.setHardwareVersion(substring.substring(2, 4));
                                 EventBus.getDefault().postSticky(deviceInfoBean);
                             }
                             break;
                         case SYS_INFO_MODEL://获取设备机型 (必需实现)
                             if (substring.length() == 8) {
-                                String factory = hexStr2Str(substring.substring(0, 4));
-                                String model = hexStr2Str(substring.substring(4, 8));
-                                deviceInfoBean.setFactory(factory);
-                                deviceInfoBean.setModel(model);
+                                deviceInfoBean.setFactory(substring.substring(0, 4));
+                                deviceInfoBean.setModel(substring.substring(4, 8));
                                 EventBus.getDefault().postSticky(deviceInfoBean);
                             }
                             break;
@@ -313,7 +308,7 @@ public class CmdApi {
     /**
      * 十六进制转换字符串
      *
-     * @param String str Byte字符串(Byte之间无分隔符 如:[616C6B])
+     * @param hexStr str Byte字符串(Byte之间无分隔符 如:[616C6B])
      * @return String 对应的字符串
      */
     public static String hexStr2Str(String hexStr) {

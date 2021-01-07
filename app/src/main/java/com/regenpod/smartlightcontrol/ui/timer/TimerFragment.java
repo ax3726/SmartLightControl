@@ -1,5 +1,6 @@
 package com.regenpod.smartlightcontrol.ui.timer;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -17,6 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 public class TimerFragment extends BaseFragment {
@@ -38,7 +40,7 @@ public class TimerFragment extends BaseFragment {
         baseCommonViewHolder.setOnClickListener(R.id.img_ok, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, timerOperateHelper.getProgress()*60,true));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, timerOperateHelper.getProgress() * 60, true));
                 showToast("send success！");
             }
         });
@@ -76,10 +78,19 @@ public class TimerFragment extends BaseFragment {
                 });
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
+        }
+    }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getControlEvent(ControlBean controlBean) {
         if (controlBean.getCommand() == SYS_CONTROL_TIME) {
-            timerOperateHelper.setProgress(controlBean.getValue()/60);
+            timerOperateHelper.setProgress(controlBean.getValue() / 60);
         }
     }
 

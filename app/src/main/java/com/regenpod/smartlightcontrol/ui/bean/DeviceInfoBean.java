@@ -12,17 +12,17 @@ public class DeviceInfoBean {
     /**
      * 设备地址
      */
-    private int address;
+    private String address;
 
     /**
      * 软件版本
      */
-    private int softwareVersion;
+    private String softwareVersion;
 
     /**
      * 硬件版本
      */
-    private int hardwareVersion;
+    private String hardwareVersion;
 
     /**
      * 厂家
@@ -50,19 +50,27 @@ public class DeviceInfoBean {
         this.model = model;
     }
 
-    public int getSoftwareVersion() {
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getSoftwareVersion() {
         return softwareVersion;
     }
 
-    public void setSoftwareVersion(int softwareVersion) {
+    public void setSoftwareVersion(String softwareVersion) {
         this.softwareVersion = softwareVersion;
     }
 
-    public int getHardwareVersion() {
+    public String getHardwareVersion() {
         return hardwareVersion;
     }
 
-    public void setHardwareVersion(int hardwareVersion) {
+    public void setHardwareVersion(String hardwareVersion) {
         this.hardwareVersion = hardwareVersion;
     }
 
@@ -72,13 +80,5 @@ public class DeviceInfoBean {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public int getAddress() {
-        return address;
-    }
-
-    public void setAddress(int address) {
-        this.address = address;
     }
 }

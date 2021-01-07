@@ -64,9 +64,9 @@ public class DeviceInfoDialog extends Dialog {
                 dismiss();
             }
         });
-        String address = deviceInfoBean.getAddress() == 0 ? "" : deviceInfoBean.getAddress() + "";
-        String softwareVersion = deviceInfoBean.getSoftwareVersion() == 0 ? "" : deviceInfoBean.getSoftwareVersion() + "";
-        String hardwareVersion = deviceInfoBean.getHardwareVersion() == 0 ? "" : deviceInfoBean.getHardwareVersion() + "";
+        String address = TextUtils.isEmpty(deviceInfoBean.getAddress()) ? "" : deviceInfoBean.getAddress() + "";
+        String softwareVersion =TextUtils.isEmpty(deviceInfoBean.getSoftwareVersion()) ? "" : deviceInfoBean.getSoftwareVersion() + "";
+        String hardwareVersion = TextUtils.isEmpty(deviceInfoBean.getHardwareVersion()) ? "" : deviceInfoBean.getHardwareVersion() + "";
         String factory = TextUtils.isEmpty(deviceInfoBean.getFactory()) ? "" : deviceInfoBean.getFactory();
         String model = TextUtils.isEmpty(deviceInfoBean.getModel()) ? "" : deviceInfoBean.getModel();
         tvAddress.setText("联机地址:" + address);

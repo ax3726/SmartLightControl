@@ -69,7 +69,6 @@ public class MainActivity extends BaseActivity {
         baseCommonViewHolder.setOnClickListener(R.id.tv_device_name, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deviceInfoBean = new DeviceInfoBean();
                 if (deviceInfoBean == null) {
                     showToast("无设备信息！");
                     return;
@@ -88,7 +87,6 @@ public class MainActivity extends BaseActivity {
                             changeFragment(0);
                         }
                         break;
-
                     case R.id.rb_timer:
                         if (currentFragmentPosition != 1) {
                             changeFragment(1);
@@ -121,7 +119,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         initFragment();
-        showLoading();
+       showLoading();
         BluetoothHelper.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -218,6 +216,8 @@ public class MainActivity extends BaseActivity {
         showToast(switchDeviceBen.isSwitch() ? "turn on success!" : "turn off success!");
         baseCommonViewHolder.setSelect(R.id.img_switch, switchDeviceBen.isSwitch());
     }
+
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
