@@ -40,7 +40,7 @@ public class FileUtil {
         if (TextUtils.isEmpty(dir)) {
             dir = LightApplication.getInstance().getApplicationContext().getFilesDir().getPath() + "/";
         }
-        return dir + "test/";
+        return dir + "灯控异常错误信息/";
     }
 
     /**

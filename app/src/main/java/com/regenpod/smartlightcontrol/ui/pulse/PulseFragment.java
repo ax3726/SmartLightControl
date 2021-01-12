@@ -52,12 +52,16 @@ public class PulseFragment extends BaseFragment {
             public void onClick(View v) {
                 int ht660Progress = ht660OperateHelper.getProgress();
                 int ht850Progress = ht850OperateHelper.getProgress();
+
                 int dc660Progress = dc660OperateHelper.getProgress();
                 int dc850Progress = dc850OperateHelper.getProgress();
+
+
+
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_FER, ht660Progress,true));
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_FER, ht850Progress,true));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, dc660Progress));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, dc850Progress));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, (int) (dc660Progress*0.8)));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, (int) (dc850Progress*0.8)));
                 showToast("send success！");
             }
 
@@ -150,7 +154,7 @@ public class PulseFragment extends BaseFragment {
                 new OperateHelper.OperateListener() {
                     @Override
                     public int getAdd(int progress) {
-                        progress = progress + (2000 / 100);
+                        progress = progress + 50;
                         if (progress > 2000) {
                             progress = 2000;
                         }
@@ -159,7 +163,7 @@ public class PulseFragment extends BaseFragment {
 
                     @Override
                     public int getLess(int progress) {
-                        progress = progress - (2000 / 100);
+                        progress = progress - 50;
                         if (progress < 1) {
                             progress = 1;
                         }
@@ -182,8 +186,8 @@ public class PulseFragment extends BaseFragment {
                     @Override
                     public int getAdd(int progress) {
                         progress = progress + 1;
-                        if (progress > 80) {
-                            progress = 80;
+                        if (progress > 100) {
+                            progress = 100;
                         }
                         return progress;
                     }
@@ -214,8 +218,8 @@ public class PulseFragment extends BaseFragment {
                     @Override
                     public int getAdd(int progress) {
                         progress = progress + 1;
-                        if (progress > 80) {
-                            progress = 80;
+                        if (progress > 100) {
+                            progress = 100;
                         }
                         return progress;
                     }
