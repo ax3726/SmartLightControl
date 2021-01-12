@@ -34,6 +34,8 @@ import com.lm.common.adapter.BaseRecycleViewAdapter;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
+import com.regenpod.smartlightcontrol.app.LightApplication;
+import com.regenpod.smartlightcontrol.utils.PermissionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +59,12 @@ public class ConnectActivity extends BaseActivity {
     @Override
     protected void initView(Bundle savedInstanceState) {
         rcDevice = findViewById(R.id.rc_device);
+        PermissionUtil.requestEachRxPermission(this, new PermissionUtil.OnPermissionListener() {
+            @Override
+            public void onPermissionResult(@NonNull Boolean granted) {
+                LightApplication.makeAppDir();
+            }
+        });
     }
 
     @Override
@@ -71,15 +79,17 @@ public class ConnectActivity extends BaseActivity {
     private void initAdapter() {
         mAdapter = new BaseRecycleViewAdapter<BleDevice>(R.layout.item_device_layout, false, true) {
             @Override
-            protected void convert(@NotNull BaseCommonViewHolder baseCommonViewHolder, final BleDevice item) {
+            protected void convert(@NotNull final BaseCommonViewHolder baseCommonViewHolder, final BleDevice item) {
                 baseCommonViewHolder.setText(R.id.tv_device_name, item.getName())
                         .setOnClickListener(R.id.btn_connect, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 if (!BleManager.getInstance().isConnected(item)) {
                                     BleManager.getInstance().cancelScan();
+
                                     connect(item);
                                 }
+                                baseCommonViewHolder.setText(R.id.tv_device_name, 0);
                             }
                         });
             }

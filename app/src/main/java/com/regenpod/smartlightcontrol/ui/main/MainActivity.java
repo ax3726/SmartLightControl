@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         initFragment();
-       showLoading();
+        showLoading();
         BluetoothHelper.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -216,8 +216,6 @@ public class MainActivity extends BaseActivity {
         showToast(switchDeviceBen.isSwitch() ? "turn on success!" : "turn off success!");
         baseCommonViewHolder.setSelect(R.id.img_switch, switchDeviceBen.isSwitch());
     }
-
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
