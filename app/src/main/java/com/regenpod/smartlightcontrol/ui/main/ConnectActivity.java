@@ -62,7 +62,9 @@ public class ConnectActivity extends BaseActivity {
         PermissionUtil.requestEachRxPermission(this, new PermissionUtil.OnPermissionListener() {
             @Override
             public void onPermissionResult(@NonNull Boolean granted) {
-                LightApplication.makeAppDir();
+                if (granted) {
+                    LightApplication.makeAppDir();
+                }
             }
         });
     }
