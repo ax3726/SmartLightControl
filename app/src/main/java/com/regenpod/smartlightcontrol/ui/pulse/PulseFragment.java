@@ -123,7 +123,7 @@ public class PulseFragment extends BaseFragment {
                 new OperateHelper.OperateListener() {
                     @Override
                     public int getAdd(int progress) {
-                        progress = progress + 50;
+                        progress = progress + 10;
                         if (progress > 2000) {
                             progress = 2000;
                         }
@@ -132,7 +132,7 @@ public class PulseFragment extends BaseFragment {
 
                     @Override
                     public int getLess(int progress) {
-                        progress = progress - 50;
+                        progress = progress - 10;
                         if (progress < 1) {
                             progress = 1;
                         }
@@ -154,7 +154,7 @@ public class PulseFragment extends BaseFragment {
                 new OperateHelper.OperateListener() {
                     @Override
                     public int getAdd(int progress) {
-                        progress = progress + 50;
+                        progress = progress + 10;
                         if (progress > 2000) {
                             progress = 2000;
                         }
@@ -163,7 +163,7 @@ public class PulseFragment extends BaseFragment {
 
                     @Override
                     public int getLess(int progress) {
-                        progress = progress - 50;
+                        progress = progress - 10;
                         if (progress < 1) {
                             progress = 1;
                         }

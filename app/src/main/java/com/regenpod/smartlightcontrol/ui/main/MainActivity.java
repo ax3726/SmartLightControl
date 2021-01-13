@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 import androidx.fragment.app.Fragment;
@@ -194,7 +193,7 @@ public class MainActivity extends BaseActivity {
         if (deviceInfoBean == null) {
             deviceInfoBean = new DeviceInfoBean();
         }
-        switch (deviceInfoBean.getStatus()) {
+        switch (deviceInfo.getStatus()) {
             case SYS_INFO_ADDRESS://获取设备联机地址
                 deviceInfoBean.setAddress(deviceInfo.getAddress());
                 break;
