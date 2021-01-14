@@ -51,8 +51,9 @@ public class DimmingFragment extends BaseFragment {
             public void onClick(View v) {
                 int dm660Progress = dm660OperateHelper.getProgress();
                 int dm850Progress = dm850OperateHelper.getProgress();
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, dm660Progress));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, dm850Progress));
+
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, (int) (dm660Progress*0.8)));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, (int) (dm850Progress*0.8)));
                 showToast("send success！");
             }
         });

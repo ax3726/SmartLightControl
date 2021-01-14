@@ -88,10 +88,8 @@ public class ConnectActivity extends BaseActivity {
                             public void onClick(View v) {
                                 if (!BleManager.getInstance().isConnected(item)) {
                                     BleManager.getInstance().cancelScan();
-
                                     connect(item);
                                 }
-                                baseCommonViewHolder.setText(R.id.tv_device_name, 0);
                             }
                         });
             }

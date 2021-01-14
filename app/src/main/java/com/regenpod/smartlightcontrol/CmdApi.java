@@ -2,8 +2,10 @@ package com.regenpod.smartlightcontrol;
 
 
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.clj.fastble.utils.HexUtil;
+import com.regenpod.smartlightcontrol.app.LightApplication;
 import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.ui.bean.DeviceInfoBean;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
@@ -277,20 +279,35 @@ public class CmdApi {
                 }
                 break;
             case SYS_STATUS: //设备状态
-                //设备属性值
-                if (validData.length() > 4) {
-                    //控制指令
-                    int controlCommand = Integer.parseInt(validData.substring(2, 4), 16);
-
-                    String substring = validData.substring(4);
-                    //值
-                    int value = Integer.parseInt(substring, 16);
-                    //发送值
-                    EventBus.getDefault().postSticky(new ControlBean(controlCommand, value));
-                } else if (validData.length() == 4) {
-                    int status = Integer.parseInt(validData.substring(2), 16);
-                    //发送设备状态值
-                    EventBus.getDefault().postSticky(new StatusBean(status));
+                //控制指令
+                int controlCommand = Integer.parseInt(validData.substring(2, 4), 16);
+                switch (controlCommand) {
+                    case SYS_STATUS_RUNNING:
+                        //发送设备状态值
+                        EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_RUNNING));
+                        break;
+                    case SYS_STATUS_END:
+                        //发送设备状态值
+                        EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_END));
+                        break;
+                    case SYS_STATUS_NORMAL:
+                        EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_NORMAL));
+                        break;
+                    case SYS_STATUS_ERROR:
+                        EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_ERROR));
+                        Toast.makeText(LightApplication.getInstance(), "设备故障! 代码："+validData.substring(4), Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        String substring = validData.substring(4);
+                        try {
+                            //值
+                            int value = Integer.parseInt(substring, 16);
+                            //发送值
+                            EventBus.getDefault().postSticky(new ControlBean(controlCommand, value));
+                        } catch (Exception ex) {
+                            Toast.makeText(LightApplication.getInstance(), "解析数据异常!", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
                 }
                 break;
             case SYS_CONTROL: //设备控制
