@@ -12,7 +12,7 @@ import android.view.View;
  */
 public class LongTouchListener implements View.OnTouchListener {
     private boolean isRunning = false;
-    private Handler handler = new Handler() {
+     private Handler handler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == 100) {

@@ -36,7 +36,7 @@ public class BluetoothHelper {
         @Override
         public void dispatchMessage(@NonNull Message msg) {
             super.dispatchMessage(msg);
-            if (msg.obj==null) {
+            if (msg.obj == null) {
                 return;
             }
             switch (msg.what) {
@@ -75,7 +75,7 @@ public class BluetoothHelper {
         isDeiceRunning = deiceRunning;
     }
 
-    public void init(BleDevice bleDevice) {
+    public boolean init(BleDevice bleDevice) {
         this.bleDevice = bleDevice;
         BluetoothGatt gatt = BleManager.getInstance().getBluetoothGatt(bleDevice);
         for (BluetoothGattService service : gatt.getServices()) {
@@ -90,12 +90,12 @@ public class BluetoothHelper {
         sendThread.start();
         if (characteristicWrite == null) {
             Log.e("lm", "没找到写入服务!");
-            return;
+            return false;
         }
 
         if (characteristicRead == null) {
             Log.e("lm", "没找到监听服务!");
-            return;
+            return false;
         }
         BleManager.getInstance().notify(
                 bleDevice,
@@ -103,6 +103,7 @@ public class BluetoothHelper {
                 characteristicRead.getUuid().toString(),
                 notifyCallback);
 
+        return true;
 
     }
 
@@ -202,9 +203,12 @@ public class BluetoothHelper {
     public void disconnect() {
         if (sendThread != null) {
             sendThread.end();
+            sendThread = null;
         }
         if (bleDevice != null) {
             BleManager.getInstance().disconnect(bleDevice);
+            BleManager.getInstance().destroy();
+            bleDevice = null;
         }
 
     }

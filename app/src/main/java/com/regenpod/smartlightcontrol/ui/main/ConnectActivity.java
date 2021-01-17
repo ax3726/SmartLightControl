@@ -101,8 +101,7 @@ public class ConnectActivity extends BaseActivity {
 
     @Override
     protected void releaseData() {
-        BleManager.getInstance().disconnectAllDevice();
-        BleManager.getInstance().destroy();
+
     }
 
     private void showConnectedDevice() {
@@ -244,6 +243,9 @@ public class ConnectActivity extends BaseActivity {
                 if (TextUtils.isEmpty(bleDevice.getName())) {
                     return;
                 }
+                if (!bleDevice.getName().contains("Minew")) {
+                    return;
+                }
                 mDataList.add(bleDevice);
                 mAdapter.notifyDataSetChanged();
             }
@@ -271,9 +273,13 @@ public class ConnectActivity extends BaseActivity {
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 closeLoading();
-                BluetoothHelper.getInstance().init(bleDevice);
-                startActivity(new Intent(aty, MainActivity.class));
-                finish();
+                boolean result=BluetoothHelper.getInstance().init(bleDevice);
+                if (!result) {
+                    showToast("不支持该蓝牙设备！");
+                } else {
+                    startActivity(new Intent(aty, MainActivity.class));
+                    finish();
+                }
             }
 
             @Override

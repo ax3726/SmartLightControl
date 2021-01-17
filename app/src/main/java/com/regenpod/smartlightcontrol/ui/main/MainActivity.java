@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.clj.fastble.BleManager;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
@@ -91,8 +92,18 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        startActivity(new Intent(aty, ConnectActivity.class));
-                        finish();
+                        BluetoothHelper.getInstance().disconnect();
+                        showLoading("正在退出中...");
+                        BluetoothHelper.getInstance().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                closeLoading();
+                                startActivity(new Intent(aty, ConnectActivity.class));
+                                finish();
+                            }
+                        }, 3000);
+
+
                     }
                 });
                 builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
@@ -289,7 +300,15 @@ public class MainActivity extends BaseActivity {
                 showToast("Press again to exit the program!");
                 exitTime = System.currentTimeMillis();
             } else {
-                finish();
+                showLoading("正在退出中...");
+                BluetoothHelper.getInstance().disconnect();
+                BluetoothHelper.getInstance().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeLoading();
+                        finish();
+                    }
+                }, 3000);
             }
             return true;
         }
@@ -303,5 +322,6 @@ public class MainActivity extends BaseActivity {
         isRunning = false;
         EventBus.getDefault().unregister(this);
         BluetoothHelper.getInstance().disconnect();
+
     }
 }
