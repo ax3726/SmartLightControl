@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 public class DimmingFragment extends BaseFragment {
@@ -52,12 +53,22 @@ public class DimmingFragment extends BaseFragment {
                 int dm660Progress = dm660OperateHelper.getProgress();
                 int dm850Progress = dm850OperateHelper.getProgress();
 
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, (int) (dm660Progress*0.8)));
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, (int) (dm850Progress*0.8)));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, (int) (dm660Progress * 0.8)));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_PWM, (int) (dm850Progress * 0.8)));
                 showToast("send success！");
             }
         });
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            //读取设备控制值
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
+        }
     }
 
     private void initDm660() {

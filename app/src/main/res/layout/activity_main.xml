@@ -25,7 +25,7 @@
             android:id="@+id/tv_device_name"
             android:layout_width="78dp"
             android:layout_height="38dp"
-            android:layout_toLeftOf="@+id/img_bluetooth"
+            android:layout_toLeftOf="@+id/tv_bluetooth"
             android:text="设备信息"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="8dp"
@@ -38,7 +38,7 @@
 
 
         <TextView
-            android:id="@+id/img_bluetooth"
+            android:id="@+id/tv_bluetooth"
             android:layout_width="78dp"
             android:layout_height="38dp"
             android:background="@drawable/selector_main_menu_bg"

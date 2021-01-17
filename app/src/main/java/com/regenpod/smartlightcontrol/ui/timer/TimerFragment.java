@@ -1,7 +1,8 @@
 package com.regenpod.smartlightcontrol.ui.timer;
 
-import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -10,11 +11,16 @@ import com.lm.common.base.BaseFragment;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
 import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
+import com.regenpod.smartlightcontrol.ui.bean.TimeBean;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
+import com.regenpod.smartlightcontrol.utils.ScheduledExecutorServiceManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
@@ -25,6 +31,8 @@ public class TimerFragment extends BaseFragment {
     private BaseCommonViewHolder baseCommonViewHolder;
     private TimerViewModel timerViewModel;
     private OperateHelper timerOperateHelper;
+    private boolean isRunningTime = false;
+    private TextView tvTimeProgress;
 
     @Override
     protected int getLayoutId() {
@@ -33,6 +41,7 @@ public class TimerFragment extends BaseFragment {
 
     @Override
     protected void initView(View view) {
+        tvTimeProgress = view.findViewById(R.id.tv_time_progress);
         baseCommonViewHolder = new BaseCommonViewHolder(view);
         timerViewModel =
                 ViewModelProviders.of(this).get(TimerViewModel.class);
@@ -83,6 +92,7 @@ public class TimerFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
         }
     }
 
@@ -94,9 +104,46 @@ public class TimerFragment extends BaseFragment {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getTime(TimeBean timeBean) {
+        if (timeBean.getTime() == 0) {
+            isRunningTime = false;
+            tvTimeProgress.setText("倒计时结束，灯光关闭工作!");
+        } else {
+            if (!isRunningTime) {
+                startTime();
+            }
+            if (timeBean.getTime() < 60) {
+                tvTimeProgress.setText(timeBean.getTime() + "秒后关闭灯光!");
+            } else {
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("mm分ss秒");
+                    String formatTime = formatter.format(timeBean.getTime() * 1000);
+                    tvTimeProgress.setText(formatTime + "后关闭灯光。");
+                } catch (Exception ex) {
+                    Toast.makeText(aty, "倒计时时间异常！！", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }
+    }
+
     @Override
     protected void initData() {
+    }
 
+    private void startTime() {
+        isRunningTime = true;
+        ScheduledExecutorServiceManager.getInstance().scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (!isRunningTime) {
+                    return;
+                }
+                // 读取设备状态
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
+            }
+        }, 1,1, TimeUnit.SECONDS);
     }
 
     @Override

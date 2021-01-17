@@ -1,5 +1,8 @@
 package com.regenpod.smartlightcontrol.ui.main;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +23,7 @@ import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
 import com.regenpod.smartlightcontrol.ui.dimming.DimmingFragment;
 import com.regenpod.smartlightcontrol.ui.pulse.PulseFragment;
 import com.regenpod.smartlightcontrol.ui.timer.TimerFragment;
+import com.regenpod.smartlightcontrol.utils.ScheduledExecutorServiceManager;
 import com.regenpod.smartlightcontrol.widget.dialog.DeviceInfoDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
@@ -56,6 +61,7 @@ public class MainActivity extends BaseActivity {
     private RadioGroup rgBottom;
     private DeviceInfoBean deviceInfoBean;
     private DeviceInfoDialog deviceInfoDialog;
+    private boolean isRunning = false;
 
     @Override
     protected int getLayoutId() {
@@ -74,6 +80,29 @@ public class MainActivity extends BaseActivity {
                 }
                 deviceInfoDialog = new DeviceInfoDialog(aty, deviceInfoBean);
                 deviceInfoDialog.show();
+            }
+        }).setOnClickListener(R.id.tv_bluetooth, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(aty);
+                builder.setTitle("提示");
+                builder.setMessage("进入蓝牙连接界面后会断开当前连接，是否继续？");
+                builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        startActivity(new Intent(aty, ConnectActivity.class));
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+
             }
         });
         rgBottom = findViewById(R.id.rg_bottom);
@@ -124,8 +153,23 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 loadCommand();
                 closeLoading();
+                keepConnect();
             }
         }, 3000);
+    }
+
+    private void keepConnect() {
+        isRunning = true;
+        ScheduledExecutorServiceManager.getInstance().scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (!isRunning) {
+                    return;
+                }
+                // 读取设备状态
+                BluetoothHelper.getInstance().senMessage(createMessage(0, -1, -1));
+            }
+        }, 60, 60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -256,6 +300,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isRunning = false;
         EventBus.getDefault().unregister(this);
         BluetoothHelper.getInstance().disconnect();
     }

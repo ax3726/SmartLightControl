@@ -5,23 +5,31 @@ import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 /**
  * @auther liming
  * @date 2021-01-07
  * @desc
  */
 public class LongTouchListener implements View.OnTouchListener {
-    private boolean isRunning=false;
+    private boolean isRunning = false;
     private Handler handler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(final Message msg) {
             if (msg.what == 100) {
-                onClick(msg.obj == null ? null : (View) msg.obj);
+                if (isRunning) {
+                    postDelayed(runnable, 100);
+                } else {
+                    removeCallbacks(runnable);
+                }
             }
+        }
+    };
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            onClick(null);
+            handler.sendEmptyMessage(100);
         }
     };
 
@@ -35,30 +43,20 @@ public class LongTouchListener implements View.OnTouchListener {
         }
         return true;
     }
-    private ScheduledExecutorService scheduledExecutor;
+
 
     private void updateAddOrSubtract(final View view) {
-        isRunning=true;
-        scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutor.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                if (!isRunning) {
-                    return;
-                }
-                Message msg = handler.obtainMessage(100);
-                msg.obj = view;
-                handler.sendMessage(msg);
-            }
-        }, 0, 100, TimeUnit.MILLISECONDS);    //每间隔100ms发送Message
+        isRunning = true;
+        Message msg = handler.obtainMessage(100);
+        msg.obj = view;
+        handler.sendMessage(msg);
+        onClick(null);
+
     }
 
     private void stopAddOrSubtract() {
-        isRunning=false;
-        if (scheduledExecutor != null) {
-            scheduledExecutor.shutdownNow();
-            scheduledExecutor = null;
-        }
+        isRunning = false;
+        handler.removeCallbacks(runnable);
     }
 
 

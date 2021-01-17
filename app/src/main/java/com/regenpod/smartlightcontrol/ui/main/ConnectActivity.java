@@ -273,6 +273,7 @@ public class ConnectActivity extends BaseActivity {
                 closeLoading();
                 BluetoothHelper.getInstance().init(bleDevice);
                 startActivity(new Intent(aty, MainActivity.class));
+                finish();
             }
 
             @Override

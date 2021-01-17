@@ -18,7 +18,7 @@ public class LightApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        if (System.currentTimeMillis() >= 1611582840000L) {//大于当前时间退出APP
+        if (System.currentTimeMillis() >= 1612256350000L) {//大于当前时间退出APP
             android.os.Process.killProcess(android.os.Process.myPid());    //获取PID
             System.exit(0);   //常规java、c#的标准退出法，返回值为0代表正常退出
         }

@@ -10,6 +10,7 @@ import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.ui.bean.DeviceInfoBean;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
 import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
+import com.regenpod.smartlightcontrol.ui.bean.TimeBean;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -285,6 +286,10 @@ public class CmdApi {
                     case SYS_STATUS_RUNNING:
                         //发送设备状态值
                         EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_RUNNING));
+                        if (validData.length() == 16) {
+                            int time = Integer.parseInt(validData.substring(12, 16), 16);
+                            EventBus.getDefault().postSticky(new TimeBean(time));
+                        }
                         break;
                     case SYS_STATUS_END:
                         //发送设备状态值
@@ -295,7 +300,7 @@ public class CmdApi {
                         break;
                     case SYS_STATUS_ERROR:
                         EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_ERROR));
-                        Toast.makeText(LightApplication.getInstance(), "设备故障! 代码："+validData.substring(4), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LightApplication.getInstance(), "设备故障! 代码：" + validData.substring(4), Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         String substring = validData.substring(4);

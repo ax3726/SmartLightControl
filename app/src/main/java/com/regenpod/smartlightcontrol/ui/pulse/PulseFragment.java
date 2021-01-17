@@ -20,6 +20,7 @@ import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_FER;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 
@@ -56,8 +57,6 @@ public class PulseFragment extends BaseFragment {
                 int dc660Progress = dc660OperateHelper.getProgress();
                 int dc850Progress = dc850OperateHelper.getProgress();
 
-
-
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_FER, ht660Progress,true));
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_RW_FER, ht850Progress,true));
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_R_PWM, (int) (dc660Progress*0.8)));
@@ -67,8 +66,20 @@ public class PulseFragment extends BaseFragment {
 
 
         });
-
         EventBus.getDefault().register(this);
+    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            //读取设备控制值
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1, true));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1, true));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -89,32 +100,6 @@ public class PulseFragment extends BaseFragment {
         }
     }
 
-
-    public byte[] encrypt(byte[] bytes, int key) {
-        if (bytes == null) {
-            return null;
-        }
-        int len = bytes.length;
-
-        for (int i = 0; i < len; i++) {
-            bytes[i] = (byte) (bytes[i] ^ key);
-            key = bytes[i];
-        }
-        return bytes;
-    }
-
-    public byte[] decrypt(byte[] bytes, int key) {
-        if (bytes == null) {
-            return null;
-        }
-        int len = bytes.length;
-        for (int i = len - 1; i > 0; i--) {
-            bytes[i] = (byte) (bytes[i] ^ bytes[i - 1]);
-        }
-        bytes[0] = (byte) (bytes[0] ^ key);
-        return bytes;
-    }
-
     private void initHt660() {
         ht660OperateHelper = new OperateHelper();
         ht660OperateHelper.init(baseCommonViewHolder.getTextView(R.id.tv_ht_660),
@@ -123,7 +108,12 @@ public class PulseFragment extends BaseFragment {
                 new OperateHelper.OperateListener() {
                     @Override
                     public int getAdd(int progress) {
-                        progress = progress + 10;
+                        if (progress>=100) {
+                            progress = progress + 20;
+                        }else {
+                            progress = progress + 10;
+                        }
+
                         if (progress > 2000) {
                             progress = 2000;
                         }
@@ -132,7 +122,11 @@ public class PulseFragment extends BaseFragment {
 
                     @Override
                     public int getLess(int progress) {
-                        progress = progress - 10;
+                        if (progress>=100) {
+                            progress = progress - 20;
+                        }else {
+                            progress = progress - 10;
+                        }
                         if (progress < 1) {
                             progress = 1;
                         }
@@ -154,7 +148,11 @@ public class PulseFragment extends BaseFragment {
                 new OperateHelper.OperateListener() {
                     @Override
                     public int getAdd(int progress) {
-                        progress = progress + 10;
+                        if (progress>=100) {
+                            progress = progress + 20;
+                        }else {
+                            progress = progress + 10;
+                        }
                         if (progress > 2000) {
                             progress = 2000;
                         }
@@ -163,7 +161,11 @@ public class PulseFragment extends BaseFragment {
 
                     @Override
                     public int getLess(int progress) {
-                        progress = progress - 10;
+                        if (progress>=100) {
+                            progress = progress - 20;
+                        }else {
+                            progress = progress - 10;
+                        }
                         if (progress < 1) {
                             progress = 1;
                         }
@@ -195,8 +197,8 @@ public class PulseFragment extends BaseFragment {
                     @Override
                     public int getLess(int progress) {
                         progress = progress - 1;
-                        if (progress < 1) {
-                            progress = 1;
+                        if (progress < 0) {
+                            progress = 0;
                         }
                         return progress;
                     }
@@ -227,8 +229,8 @@ public class PulseFragment extends BaseFragment {
                     @Override
                     public int getLess(int progress) {
                         progress = progress - 1;
-                        if (progress < 1) {
-                            progress = 1;
+                        if (progress < 0) {
+                            progress = 0;
                         }
                         return progress;
                     }

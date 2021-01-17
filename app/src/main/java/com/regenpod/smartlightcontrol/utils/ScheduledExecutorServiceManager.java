@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 页面：定时器管理类
  *
- * @author zhangguihao
+ * @author lm
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 public class ScheduledExecutorServiceManager {
