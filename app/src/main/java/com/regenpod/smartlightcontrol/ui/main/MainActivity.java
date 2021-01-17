@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.clj.fastble.BleManager;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
@@ -36,10 +35,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_FER;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_RW_PWM;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_FER;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_R_PWM;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_START;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_STOP;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
@@ -144,6 +139,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if (baseCommonViewHolder.isSelected(R.id.img_switch)) {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_STOP, -1));
+                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, 0, true));
                     showLoading("Shutting down...");
                 } else {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
@@ -178,7 +174,7 @@ public class MainActivity extends BaseActivity {
                     return;
                 }
                 // 读取设备状态
-                BluetoothHelper.getInstance().senMessage(createMessage(0, -1, -1));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
             }
         }, 60, 60, TimeUnit.SECONDS);
     }
@@ -228,19 +224,15 @@ public class MainActivity extends BaseActivity {
      */
     private void loadCommand() {
         // 读取设备状态
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
+        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
 
         // 读取设备信息
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_INFO, SYS_INFO_MODEL, -1));
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_INFO, SYS_INFO_ADDRESS, -1));
         BluetoothHelper.getInstance().senMessage(createMessage(SYS_INFO, SYS_INFO_VER, -1));
 
-        //读取设备控制值
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1, true));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1, true));
-        BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

@@ -33,6 +33,7 @@ public class TimerFragment extends BaseFragment {
     private OperateHelper timerOperateHelper;
     private boolean isRunningTime = false;
     private TextView tvTimeProgress;
+    private boolean isShowTime = false;
 
     @Override
     protected int getLayoutId() {
@@ -91,8 +92,7 @@ public class TimerFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_TIME, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
         }
     }
 
@@ -106,6 +106,10 @@ public class TimerFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getTime(TimeBean timeBean) {
+        if (!isShowTime) {
+            timerOperateHelper.setProgress((int) (timeBean.getTime() / 60));
+            isShowTime = true;
+        }
         if (timeBean.getTime() == 0) {
             isRunningTime = false;
             tvTimeProgress.setText("倒计时结束，灯光关闭工作!");
@@ -141,9 +145,9 @@ public class TimerFragment extends BaseFragment {
                     return;
                 }
                 // 读取设备状态
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, -1, -1));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
             }
-        }, 1,1, TimeUnit.SECONDS);
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     @Override

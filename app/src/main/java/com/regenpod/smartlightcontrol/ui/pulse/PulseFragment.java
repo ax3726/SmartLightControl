@@ -74,13 +74,10 @@ public class PulseFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            //读取设备控制值
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_PWM, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_PWM, -1));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_R_FER, -1, true));
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, SYS_CONTROL_RW_FER, -1, true));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
         }
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getControlEvent(ControlBean controlBean) {

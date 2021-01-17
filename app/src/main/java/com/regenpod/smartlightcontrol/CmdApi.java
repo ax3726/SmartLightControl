@@ -286,9 +286,22 @@ public class CmdApi {
                     case SYS_STATUS_RUNNING:
                         //发送设备状态值
                         EventBus.getDefault().postSticky(new StatusBean(SYS_STATUS_RUNNING));
-                        if (validData.length() == 16) {
-                            int time = Integer.parseInt(validData.substring(12, 16), 16);
+                        if (validData.length() == 20) {
+                            int time = Integer.parseInt(validData.substring(16, 20), 16);
                             EventBus.getDefault().postSticky(new TimeBean(time));
+
+                            int rw_fer =  Integer.parseInt(validData.substring(12, 16), 16);
+                            EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_RW_FER, rw_fer));
+
+                            int r_fer =  Integer.parseInt(validData.substring(8, 12), 16);
+                            EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_R_FER, r_fer));
+
+                            int rw_pwm =  Integer.parseInt(validData.substring(6, 8), 16);
+                            EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_RW_PWM, rw_pwm));
+
+                            int r_pwm =  Integer.parseInt(validData.substring(4,6), 16);
+                            EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_R_PWM, r_pwm));
+
                         }
                         break;
                     case SYS_STATUS_END:
@@ -308,7 +321,7 @@ public class CmdApi {
                             //值
                             int value = Integer.parseInt(substring, 16);
                             //发送值
-                            EventBus.getDefault().postSticky(new ControlBean(controlCommand, value));
+
                         } catch (Exception ex) {
                             Toast.makeText(LightApplication.getInstance(), "解析数据异常!", Toast.LENGTH_SHORT).show();
                         }
