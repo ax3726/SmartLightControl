@@ -272,7 +272,7 @@ public class MainActivity extends BaseActivity {
                 break;
             default://设备未启动 或者异常状态
                 baseCommonViewHolder.setSelect(R.id.img_switch, false);
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
+//                BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
                 break;
         }
     }

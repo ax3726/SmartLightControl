@@ -93,8 +93,11 @@ public class TimerFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
+        } else {
+            isRunningTime = false;
         }
     }
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -106,6 +109,9 @@ public class TimerFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getTime(TimeBean timeBean) {
+        if (!isVisible()) {
+            return;
+        }
         if (!isShowTime) {
             timerOperateHelper.setProgress((int) (timeBean.getTime() / 60));
             isShowTime = true;

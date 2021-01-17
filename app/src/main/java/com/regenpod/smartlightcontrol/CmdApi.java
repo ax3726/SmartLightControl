@@ -316,15 +316,7 @@ public class CmdApi {
                         Toast.makeText(LightApplication.getInstance(), "设备故障! 代码：" + validData.substring(4), Toast.LENGTH_SHORT).show();
                         break;
                     default:
-                        String substring = validData.substring(4);
-                        try {
-                            //值
-                            int value = Integer.parseInt(substring, 16);
-                            //发送值
 
-                        } catch (Exception ex) {
-                            Toast.makeText(LightApplication.getInstance(), "解析数据异常!", Toast.LENGTH_SHORT).show();
-                        }
                         break;
                 }
                 break;
