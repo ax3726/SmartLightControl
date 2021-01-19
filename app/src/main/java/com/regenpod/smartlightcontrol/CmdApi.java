@@ -8,6 +8,7 @@ import com.clj.fastble.utils.HexUtil;
 import com.regenpod.smartlightcontrol.app.LightApplication;
 import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
 import com.regenpod.smartlightcontrol.ui.bean.DeviceInfoBean;
+import com.regenpod.smartlightcontrol.ui.bean.LastTimeBean;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
 import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
 import com.regenpod.smartlightcontrol.ui.bean.TimeBean;
@@ -70,7 +71,10 @@ public class CmdApi {
      */
     public static final int SYS_STATUS_ERROR = 3;
     //************指令*************//
-
+    /**
+     * 查询剩余时间
+     */
+    public static final int SYS_TIME = 0X52;
     /**
      * 设备控制
      */
@@ -290,16 +294,16 @@ public class CmdApi {
                             int time = Integer.parseInt(validData.substring(16, 20), 16);
                             EventBus.getDefault().postSticky(new TimeBean(time));
 
-                            int rw_fer =  Integer.parseInt(validData.substring(12, 16), 16);
+                            int rw_fer = Integer.parseInt(validData.substring(12, 16), 16);
                             EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_RW_FER, rw_fer));
 
-                            int r_fer =  Integer.parseInt(validData.substring(8, 12), 16);
+                            int r_fer = Integer.parseInt(validData.substring(8, 12), 16);
                             EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_R_FER, r_fer));
 
-                            int rw_pwm =  Integer.parseInt(validData.substring(6, 8), 16);
+                            int rw_pwm = Integer.parseInt(validData.substring(6, 8), 16);
                             EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_RW_PWM, rw_pwm));
 
-                            int r_pwm =  Integer.parseInt(validData.substring(4,6), 16);
+                            int r_pwm = Integer.parseInt(validData.substring(4, 6), 16);
                             EventBus.getDefault().postSticky(new ControlBean(SYS_CONTROL_R_PWM, r_pwm));
 
                         }
@@ -327,6 +331,11 @@ public class CmdApi {
                 int value = Integer.parseInt(validData.substring(4), 16);
                 //发送值
                 EventBus.getDefault().postSticky(new ControlBean(controlCommand, value));*/
+                break;
+
+            case SYS_TIME: //获取剩余时间
+                int lastTime = Integer.parseInt(validData.substring(2), 16);
+                EventBus.getDefault().postSticky(new LastTimeBean(lastTime));
                 break;
         }
 

@@ -11,6 +11,7 @@ import com.lm.common.base.BaseFragment;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
 import com.regenpod.smartlightcontrol.R;
 import com.regenpod.smartlightcontrol.ui.bean.ControlBean;
+import com.regenpod.smartlightcontrol.ui.bean.LastTimeBean;
 import com.regenpod.smartlightcontrol.ui.bean.TimeBean;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
 import com.regenpod.smartlightcontrol.utils.ScheduledExecutorServiceManager;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
-import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_TIME;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
 public class TimerFragment extends BaseFragment {
@@ -33,7 +34,6 @@ public class TimerFragment extends BaseFragment {
     private OperateHelper timerOperateHelper;
     private boolean isRunningTime = false;
     private TextView tvTimeProgress;
-    private boolean isShowTime = false;
 
     @Override
     protected int getLayoutId() {
@@ -92,12 +92,11 @@ public class TimerFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_TIME, 0, -1));
         } else {
             isRunningTime = false;
         }
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -109,12 +108,13 @@ public class TimerFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getTime(TimeBean timeBean) {
+        timerOperateHelper.setProgress((int) (timeBean.getTime() / 60));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getLastTime(LastTimeBean timeBean) {
         if (!isVisible()) {
             return;
-        }
-        if (!isShowTime) {
-            timerOperateHelper.setProgress((int) (timeBean.getTime() / 60));
-            isShowTime = true;
         }
         if (timeBean.getTime() == 0) {
             isRunningTime = false;
@@ -151,7 +151,7 @@ public class TimerFragment extends BaseFragment {
                     return;
                 }
                 // 读取设备状态
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_TIME, 0, -1));
             }
         }, 1, 1, TimeUnit.SECONDS);
     }
