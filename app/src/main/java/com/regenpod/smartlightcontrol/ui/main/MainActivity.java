@@ -143,6 +143,7 @@ public class MainActivity extends BaseActivity {
                     showLoading("Shutting down...");
                 } else {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
+                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, 300, true));
                     showLoading("Booting up...");
                 }
                 checkDialog();

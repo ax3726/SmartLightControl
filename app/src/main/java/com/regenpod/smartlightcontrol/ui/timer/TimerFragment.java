@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL_TIME;
+import static com.regenpod.smartlightcontrol.CmdApi.SYS_STATUS;
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_TIME;
 import static com.regenpod.smartlightcontrol.CmdApi.createMessage;
 
@@ -92,6 +93,7 @@ public class TimerFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
             BluetoothHelper.getInstance().senMessage(createMessage(SYS_TIME, 0, -1));
         } else {
             isRunningTime = false;
