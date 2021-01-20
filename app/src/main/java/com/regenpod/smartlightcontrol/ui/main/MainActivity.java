@@ -6,16 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.IdRes;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.clj.fastble.BleManager;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
@@ -25,9 +18,6 @@ import com.regenpod.smartlightcontrol.ui.bean.DeviceInfoBean;
 import com.regenpod.smartlightcontrol.ui.bean.LastTimeBean;
 import com.regenpod.smartlightcontrol.ui.bean.StatusBean;
 import com.regenpod.smartlightcontrol.ui.bean.SwitchDeviceBen;
-import com.regenpod.smartlightcontrol.ui.dimming.DimmingFragment;
-import com.regenpod.smartlightcontrol.ui.pulse.PulseFragment;
-import com.regenpod.smartlightcontrol.ui.timer.TimerFragment;
 import com.regenpod.smartlightcontrol.utils.OperateHelper;
 import com.regenpod.smartlightcontrol.utils.ScheduledExecutorServiceManager;
 import com.regenpod.smartlightcontrol.utils.SharedPreferencesUtils;
@@ -38,8 +28,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
@@ -491,7 +479,7 @@ public class MainActivity extends BaseActivity {
             try {
                 SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
                 String formatTime = formatter.format(timeBean.getTime() * 1000);
-                tvTimeProgress.setText(formatTime + "Turn off the lights after！");
+                tvTimeProgress.setText(formatTime + "  Turn off the lights after！");
             } catch (Exception ex) {
                 Toast.makeText(aty, "The countdown time is abnormal！！", Toast.LENGTH_SHORT).show();
             }
@@ -548,6 +536,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isRunningTime = false;
         isRunning = false;
         EventBus.getDefault().unregister(this);
         BluetoothHelper.getInstance().disconnect();

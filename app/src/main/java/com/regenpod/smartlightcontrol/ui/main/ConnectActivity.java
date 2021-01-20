@@ -315,9 +315,5 @@ public class ConnectActivity extends BaseActivity {
         return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BleManager.getInstance().destroy();
-    }
+
 }
