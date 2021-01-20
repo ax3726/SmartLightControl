@@ -67,10 +67,22 @@ public class ConnectActivity extends BaseActivity {
                 }
             }
         });
+
+    }
+
+    private void initSDK() {
+        BleManager.getInstance().init(getApplication());
+        BleManager.getInstance()
+                .enableLog(true)
+                .setReConnectCount(1, 5000)
+                .setSplitWriteNum(512)
+                .setConnectOverTime(20000)
+                .setOperateTimeout(5000);
     }
 
     @Override
     protected void initData() {
+        initSDK();
         initAdapter();
         showConnectedDevice();
         checkPermissions();
@@ -273,9 +285,9 @@ public class ConnectActivity extends BaseActivity {
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 closeLoading();
-                boolean result=BluetoothHelper.getInstance().init(bleDevice);
+                boolean result = BluetoothHelper.getInstance().init(bleDevice);
                 if (!result) {
-                    showToast("不支持该蓝牙设备！");
+                    showToast("The Bluetooth device is not supported！");
                 } else {
                     startActivity(new Intent(aty, MainActivity.class));
                     finish();
@@ -301,5 +313,11 @@ public class ConnectActivity extends BaseActivity {
         if (locationManager == null)
             return false;
         return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BleManager.getInstance().destroy();
     }
 }

@@ -2,7 +2,6 @@ package com.regenpod.smartlightcontrol.app;
 
 import android.app.Application;
 
-import com.clj.fastble.BleManager;
 import com.regenpod.smartlightcontrol.CrashHandler;
 import com.regenpod.smartlightcontrol.utils.FileUtil;
 
@@ -24,13 +23,7 @@ public class LightApplication extends Application {
         }
         CrashHandler.getInstance().init(this);
 
-        BleManager.getInstance().init(this);
-        BleManager.getInstance()
-                .enableLog(true)
-                .setReConnectCount(1, 5000)
-                .setSplitWriteNum(512)
-                .setConnectOverTime(20000)
-                .setOperateTimeout(5000);
+
     }
 
     /**

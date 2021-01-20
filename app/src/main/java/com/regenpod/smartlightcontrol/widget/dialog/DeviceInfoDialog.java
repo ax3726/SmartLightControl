@@ -69,11 +69,11 @@ public class DeviceInfoDialog extends Dialog {
         String hardwareVersion = TextUtils.isEmpty(deviceInfoBean.getHardwareVersion()) ? "" : deviceInfoBean.getHardwareVersion() + "";
         String factory = TextUtils.isEmpty(deviceInfoBean.getFactory()) ? "" : deviceInfoBean.getFactory();
         String model = TextUtils.isEmpty(deviceInfoBean.getModel()) ? "" : deviceInfoBean.getModel();
-        tvAddress.setText("联机地址:" + address);
-        tvSoftwareVersion.setText("软件版本号:" + softwareVersion);
-        tvHardwareVersion.setText("硬件版本号:" + hardwareVersion);
-        tvFactory.setText("厂家:" + factory);
-        tvModel.setText("机型:" + model);
+        tvAddress.setText("Online address:" + address);
+        tvSoftwareVersion.setText("Software version number:" + softwareVersion);
+        tvHardwareVersion.setText("Hardware version number:" + hardwareVersion);
+        tvFactory.setText("Factory:" + factory);
+        tvModel.setText("Model:" + model);
     }
 
 

@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="10dp"
-        android:text="设备信息"
+        android:text="Device Information"
         android:textColor="@color/colorWhite"
         android:textSize="17dp" />
 
@@ -24,7 +24,7 @@
         android:id="@+id/tv_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="联机地址:"
+        android:text="Online address:"
         android:textColor="@color/colorWhite"
         android:textSize="14dp" />
 
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="软件版本号:"
+        android:text="Software version number:"
         android:textColor="@color/colorWhite"
         android:textSize="14dp" />
 
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="硬件版本号:"
+        android:text="Hardware version number:"
         android:textColor="@color/colorWhite"
         android:textSize="14dp" />
 
@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="厂家:"
+        android:text="Factory:"
         android:textColor="@color/colorWhite"
         android:textSize="14dp" />
 
@@ -60,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="机型:"
+        android:text="Model:"
         android:textColor="@color/colorWhite"
         android:textSize="14dp" />
 
@@ -75,7 +75,7 @@
         android:layout_marginRight="80dp"
         android:background="@drawable/shape_ok_btn"
         android:gravity="center"
-        android:text="确定"
+        android:text="Determine"
         android:textColor="@color/colorWhite"
         android:textSize="14dp" />
 
