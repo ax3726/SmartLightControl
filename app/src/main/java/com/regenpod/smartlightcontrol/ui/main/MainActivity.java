@@ -121,11 +121,10 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if (baseCommonViewHolder.isSelected(R.id.img_switch)) {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_STOP, -1));
-                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, 0, true));
                     showLoading("Shutting down...");
                 } else {
-                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, (int) SharedPreferencesUtils.getParam(aty, KEY_TIME, 0) / 60, true));
+                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
                     showLoading("Booting up...");
                 }
                 checkDialog();
