@@ -206,7 +206,6 @@ public class MainActivity extends BaseActivity {
         BluetoothHelper.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 BluetoothHelper.getInstance().senMessage(createMessage(SYS_TIME, 0, -1));
             }
         }, 1000);
