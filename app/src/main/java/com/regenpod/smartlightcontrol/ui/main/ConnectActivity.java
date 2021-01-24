@@ -234,7 +234,6 @@ public class ConnectActivity extends BaseActivity {
                 .setScanTimeOut(10000)              // 扫描超时时间，可选，默认10秒
                 .build();
         BleManager.getInstance().initScanRule(scanRuleConfig);
-
     }
 
     private void startScan() {
@@ -270,7 +269,7 @@ public class ConnectActivity extends BaseActivity {
     }
 
     private void connect(final BleDevice bleDevice) {
-        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
+        BluetoothHelper.getInstance().setBleGattCallback(new BleGattCallback() {
             @Override
             public void onStartConnect() {
                 showLoading();
@@ -295,16 +294,11 @@ public class ConnectActivity extends BaseActivity {
             }
 
             @Override
-            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                if (isActiveDisConnected) {
-                    Toast.makeText(aty, getString(R.string.active_disconnected), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(aty, getString(R.string.disconnected), Toast.LENGTH_LONG).show();
-
-                }
+            public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
 
             }
         });
+        BluetoothHelper.getInstance().connect(bleDevice);
     }
 
 

@@ -13,14 +13,73 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+    flavorDimensions("default")
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    productFlavors{
+
+        Regen_Panel{
+
+        }
+        esorop{
+
+        }
+
+    }
+    sourceSets {
+        Regen_Panel.res.srcDir('src/main/res')
+        esorop.res.srcDir('src/esorop/res')
+
+    }
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [ UMENG_CHANNEL_VALUE:name ]
+    }
+    signingConfigs {
+        xxconfig {
+            storeFile file("zhzm.jks")
+            keyAlias "zhzm"
+            keyPassword "111111"
+            storePassword "111111"
         }
     }
+    buildTypes {
+        release {
+            buildConfigField "boolean", "IS_DEBUG", "false"
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled false
+            // 移除无用的resource文件
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.xxconfig
+            android.applicationVariants.all { variant ->
 
+                variant.outputs.all { output ->
+                    if (variant.buildType.name != "debug") {
+                        variant.getPackageApplicationProvider().get().outputDirectory =
+                                new File(project.rootDir.absolutePath +
+                                        "/app/build/outputs/apk/${variant.buildType.name}")
+                    }
+
+                    variant.getPackageApplicationProvider().get().outputScope.apkDatas.forEach { apkData ->
+                        def fileName = "${name}_${releaseTime()}.apk"
+                        apkData.outputFileName = fileName
+                    }
+                }
+            }
+        }
+        debug {
+            buildConfigField "boolean", "IS_DEBUG", "true"
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled false
+            // 移除无用的resource文件
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.xxconfig
+        }
+    }
 
 }
 
@@ -36,4 +95,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     api 'io.reactivex.rxjava2:rxjava:2.2.6'
+}
+
+static def releaseTime() {
+    return new Date().format("yyyyMMdd_HH-mm-ss", TimeZone.getTimeZone("GMT+8"))
 }

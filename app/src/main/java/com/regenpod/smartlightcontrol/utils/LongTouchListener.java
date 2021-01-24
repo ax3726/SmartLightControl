@@ -2,6 +2,7 @@ package com.regenpod.smartlightcontrol.utils;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,7 +18,7 @@ public class LongTouchListener implements View.OnTouchListener {
         public void handleMessage(final Message msg) {
             if (msg.what == 100) {
                 if (isRunning) {
-                    postDelayed(runnable, 100);
+                    postDelayed(runnable, 150);
                 } else {
                     removeCallbacks(runnable);
                 }
@@ -35,10 +36,10 @@ public class LongTouchListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        Log.e("lm","onTouch："+event.getAction());
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
             updateAddOrSubtract(v);    //手指按下时触发不停的发送消息
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+        } else if (event.getAction() == MotionEvent.ACTION_UP||event.getAction() == MotionEvent.ACTION_CANCEL) {
             stopAddOrSubtract();    //手指抬起时停止发送
         }
         return true;

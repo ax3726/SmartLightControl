@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.clj.fastble.BleManager;
+import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.callback.BleNotifyCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.data.BleDevice;
@@ -23,15 +24,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BluetoothHelper {
 
-    public static final int SEND_SUECSS = 100;
-    public static final int SEND_FAIL = 200;
-    public static final int READ_SUCESS = 300;
-    public static final int READ_FAIL = 400;
+    public static final int SEND_SUECSS = 1000;
+    public static final int SEND_FAIL = 2000;
+    public static final int READ_SUCESS = 3000;
+    public static final int READ_FAIL = 4000;
     private BleDevice bleDevice;
     private BluetoothGattCharacteristic characteristicWrite = null;
     private BluetoothGattCharacteristic characteristicRead = null;
     private SendThread sendThread = null;
     private boolean isDeiceRunning = false;
+    private BleGattCallback bleGattCallback = null;
     private static Handler handler = new Handler() {
         @Override
         public void dispatchMessage(@NonNull Message msg) {
@@ -76,6 +78,7 @@ public class BluetoothHelper {
     }
 
     public boolean init(BleDevice bleDevice) {
+        close();
         this.bleDevice = bleDevice;
         BluetoothGatt gatt = BleManager.getInstance().getBluetoothGatt(bleDevice);
         for (BluetoothGattService service : gatt.getServices()) {
@@ -200,11 +203,55 @@ public class BluetoothHelper {
         }
     };
 
-    public void disconnect() {
+    public void setBleGattCallback(BleGattCallback bleGattCallback) {
+        this.bleGattCallback = bleGattCallback;
+    }
+
+    public void connect(final BleDevice bleDevice) {
+        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
+            @Override
+            public void onStartConnect() {
+                if (bleGattCallback != null) {
+                    bleGattCallback.onStartConnect();
+                }
+            }
+
+            @Override
+            public void onConnectFail(BleDevice bleDevice, BleException exception) {
+                if (bleGattCallback != null) {
+                    bleGattCallback.onConnectFail(bleDevice, exception);
+                }
+            }
+
+            @Override
+            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
+                if (bleGattCallback != null) {
+                    bleGattCallback.onConnectSuccess(bleDevice, gatt, status);
+                }
+            }
+
+            @Override
+            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
+                if (bleGattCallback != null) {
+                    bleGattCallback.onDisConnected(isActiveDisConnected, bleDevice, gatt, status);
+                }
+            }
+        });
+    }
+
+    private void close() {
         if (sendThread != null) {
             sendThread.end();
             sendThread = null;
         }
+        if (bleDevice != null && characteristicRead != null) {
+            BleManager.getInstance().removeNotifyCallback(bleDevice, characteristicRead.getUuid().toString());
+        }
+    }
+
+    public void disconnect() {
+        bleGattCallback = null;
+        close();
         if (bleDevice != null) {
             BleManager.getInstance().disconnect(bleDevice);
             BleManager.getInstance().destroy();

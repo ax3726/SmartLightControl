@@ -1,6 +1,7 @@
 package com.regenpod.smartlightcontrol.ui.main;
 
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothGatt;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.data.BleDevice;
+import com.clj.fastble.exception.BleException;
 import com.lm.common.adapter.BaseCommonViewHolder;
 import com.lm.common.base.BaseActivity;
 import com.regenpod.smartlightcontrol.BluetoothHelper;
@@ -28,6 +32,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static com.regenpod.smartlightcontrol.CmdApi.SYS_CONTROL;
@@ -60,6 +65,7 @@ public class MainActivity extends BaseActivity {
     private OperateHelper timerOperateHelper;
     private boolean isRunningTime = false;
     private TextView tvTimeProgress;
+    private int count = 0;
 
     @Override
     protected int getLayoutId() {
@@ -123,15 +129,58 @@ public class MainActivity extends BaseActivity {
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_STOP, -1));
                     showLoading("Shutting down...");
                 } else {
-                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, (int) SharedPreferencesUtils.getParam(aty, KEY_TIME, 0) / 60, true));
+                    BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_TIME, (int) SharedPreferencesUtils.getParam(aty, KEY_TIME, 0), true));
                     BluetoothHelper.getInstance().senMessage(createMessage(SYS_CONTROL, SYS_CONTROL_START, -1));
                     showLoading("Booting up...");
                 }
                 checkDialog();
             }
         });
-
+        setReConnect();
         EventBus.getDefault().register(this);
+
+    }
+
+    private void setReConnect() {
+        BluetoothHelper.getInstance().setBleGattCallback(new BleGattCallback() {
+            @Override
+            public void onStartConnect() {
+                showLoading("正在重新连接设备");
+            }
+
+            @Override
+            public void onConnectFail(BleDevice bleDevice, BleException exception) {
+                closeLoading();
+                Toast.makeText(aty, getString(R.string.connect_fail), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
+                closeLoading();
+                count = 0;
+                boolean result = BluetoothHelper.getInstance().init(bleDevice);
+                if (!result) {
+                    showToast("The Bluetooth device is not supported！");
+                    startActivity(new Intent(aty, ConnectActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
+                if (isActiveDisConnected) {
+                    return;
+                }
+                if (count == 3) {
+                    startActivity(new Intent(aty, ConnectActivity.class));
+                    finish();
+                    return;
+                }
+
+                BluetoothHelper.getInstance().connect(device);
+                count++;
+            }
+        });
     }
 
     @Override
@@ -146,19 +195,30 @@ public class MainActivity extends BaseActivity {
                 closeLoading();
                 keepConnect();
             }
-        }, 3000);
+        }, 2000);
     }
+
+    private ScheduledFuture mainScheduledFuture;
 
     private void keepConnect() {
         isRunning = true;
-        ScheduledExecutorServiceManager.getInstance().scheduleAtFixedRate(new Runnable() {
+        if (mainScheduledFuture != null) {
+            mainScheduledFuture.cancel(true);
+        }
+        mainScheduledFuture = ScheduledExecutorServiceManager.getInstance().scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (!isRunning) {
+                    if (mainScheduledFuture == null) {
+                        return;
+                    }
+                    boolean cancelled = mainScheduledFuture.isCancelled();
+                    if (!cancelled) {
+                        mainScheduledFuture.cancel(true);
+                    }
                     return;
                 }
-                // 读取设备状态
-                BluetoothHelper.getInstance().senMessage(createMessage(SYS_STATUS, 0, -1));
+                BluetoothHelper.getInstance().senMessage(createMessage(SYS_TIME, 0, -1));
             }
         }, 60, 60, TimeUnit.SECONDS);
     }
@@ -257,7 +317,9 @@ public class MainActivity extends BaseActivity {
                         } else {
                             progress = progress + 10;
                         }
-
+                        if (progress == 11) {
+                            progress = 10;
+                        }
                         if (progress > 2000) {
                             progress = 2000;
                         }
@@ -296,6 +358,9 @@ public class MainActivity extends BaseActivity {
                             progress = progress + 20;
                         } else {
                             progress = progress + 10;
+                        }
+                        if (progress == 11) {
+                            progress = 10;
                         }
                         if (progress > 2000) {
                             progress = 2000;
@@ -485,12 +550,24 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private ScheduledFuture scheduledFuture;
+
     private void startTime() {
         isRunningTime = true;
-        ScheduledExecutorServiceManager.getInstance().scheduleAtFixedRate(new Runnable() {
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(true);
+        }
+        scheduledFuture = ScheduledExecutorServiceManager.getInstance().scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (!isRunningTime) {
+                    if (scheduledFuture == null) {
+                        return;
+                    }
+                    boolean cancelled = scheduledFuture.isCancelled();
+                    if (!cancelled) {
+                        scheduledFuture.cancel(true);
+                    }
                     return;
                 }
                 // 读取设备状态
