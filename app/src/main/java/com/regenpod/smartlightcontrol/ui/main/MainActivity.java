@@ -152,6 +152,13 @@ public class MainActivity extends BaseActivity {
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
                 closeLoading();
                 Toast.makeText(aty, getString(R.string.connect_fail), Toast.LENGTH_LONG).show();
+                if (count == 3) {
+                    startActivity(new Intent(aty, ConnectActivity.class));
+                    finish();
+                    return;
+                }
+                BluetoothHelper.getInstance().connect(bleDevice);
+                count++;
             }
 
             @Override
@@ -171,12 +178,6 @@ public class MainActivity extends BaseActivity {
                 if (isActiveDisConnected) {
                     return;
                 }
-                if (count == 3) {
-                    startActivity(new Intent(aty, ConnectActivity.class));
-                    finish();
-                    return;
-                }
-
                 BluetoothHelper.getInstance().connect(device);
                 count++;
             }
